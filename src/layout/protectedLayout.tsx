@@ -1,6 +1,8 @@
 // src/components/ProtectedRoute.js
 import { Navigate, Outlet } from "react-router";
 import useAuth from "@/store/useAuth"; // Or your auth hook/context
+import AdminLayout from "./adminLayout";
+import UserLayout from "./userLayout";
 
 const ProtectedRoute = ({ allowedRoles }: { allowedRoles: string[] }) => {
   const { user } = useAuth();
@@ -15,8 +17,13 @@ const ProtectedRoute = ({ allowedRoles }: { allowedRoles: string[] }) => {
     return <Navigate to="/unauthorized" replace />;
   }
 
-  // If authenticated and role matches, render the child routes/component
-  return <Outlet />;
+  if (allowedRoles && allowedRoles.includes("admin")) {
+    return <AdminLayout />;
+  }
+
+  if (allowedRoles && allowedRoles.includes("user")) {
+    return <UserLayout />;
+  }
 };
 
 export default ProtectedRoute;
