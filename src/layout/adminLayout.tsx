@@ -1,10 +1,10 @@
 import { Outlet } from "react-router";
-import SkeuoNavbar from "@/components/ui/navbar";
+import Navbar from "@/components/ui/navbar";
 
 const AdminLayout = () => {
   return (
     <div>
-      <SkeuoNavbar />
+      <Navbar />
       <h1>Admin</h1>
       <Outlet />
     </div>
