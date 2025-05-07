@@ -10,7 +10,7 @@ const ProtectedRoute = ({ allowedRoles }: { allowedRoles: string[] }) => {
     return <Navigate to="/login" replace />;
   }
 
-  if (allowedRoles && !allowedRoles.includes(user.role)) {
+  if (allowedRoles && !allowedRoles.includes(user.additionalInfo.roles)) {
     // Redirect to an unauthorized page if role doesn't match
     return <Navigate to="/unauthorized" replace />;
   }

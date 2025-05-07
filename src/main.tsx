@@ -38,6 +38,9 @@ createRoot(document.getElementById("root")!).render(
           <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
             <Route path="admin" element={<>Admin</>} />
           </Route>
+          <Route element={<ProtectedRoute allowedRoles={["user"]} />}>
+            <Route path="dashboard" element={<>User</>} />
+          </Route>
           <Route path="test" element={<>Test</>} />
           <Route
             path="unauthorized"
