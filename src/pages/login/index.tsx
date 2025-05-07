@@ -1,14 +1,16 @@
 import { useState } from "react";
 import { useFormInput } from "@/hooks/useFormInput"; // Adjust path if needed
 import { useSWRConfig } from "swr"; // To revalidate other SWR keys
+import useAuth from "@/store/useAuth";
+import { useNavigate } from "react-router";
 
 const LoginPage = () => {
   const emailInput = useFormInput("");
   const passwordInput = useFormInput("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
-  const { mutate } = useSWRConfig(); // Get the mutate function
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -16,7 +18,7 @@ const LoginPage = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch("http://localhost:3000/auth/login", {
+      const response = await fetch("http://localhost:3000/api/auth/login", {
         // Corrected port to 3000 based on common usage, was 300 in prompt
         method: "POST",
         headers: {
@@ -35,22 +37,9 @@ const LoginPage = () => {
           data.message || "Login failed. Please check your credentials."
         );
       }
-
-      // Login successful
       console.log("Login successful:", data);
-      // Store token (e.g., in localStorage)
-      // localStorage.setItem('token', data.token); // Assuming your API returns a token
-
-      // Alert user of success
+      login(data);
       alert("Login successful! Redirecting...");
-
-      // Mutate SWR keys that depend on auth status (e.g., user profile)
-      // This tells SWR to re-fetch data for '/api/user' if you have such an endpoint.
-      mutate("/api/user"); // Example key, adjust as needed
-
-      // Redirect user or update UI
-      // For example, if using React Router: navigate('/dashboard');
-      // For now, we can clear fields
       emailInput.setValue("");
       passwordInput.setValue("");
     } catch (err: any) {
@@ -58,6 +47,7 @@ const LoginPage = () => {
       setError(err.message || "An unexpected error occurred.");
     } finally {
       setIsLoading(false);
+      navigate("/");
     }
   };
 
@@ -82,7 +72,7 @@ const LoginPage = () => {
         {error && (
           <p className="text-red-500 text-sm text-center mb-4">{error}</p>
         )}
-        <form onSubmit={handleLogin} className="space-y-8">
+        <form onSubmit={handleLogin} className="space-y-6">
           {/* Email Input */}
           <div className="relative">
             <label htmlFor="email" className={createLabelClasses(emailInput)}>
@@ -129,7 +119,7 @@ const LoginPage = () => {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-md shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-150 ease-in-out transform active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-md shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-150 ease-in-out transform active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed hover:cursor-pointer"
           >
             {isLoading ? "Logging in..." : "Login"}
           </button>
