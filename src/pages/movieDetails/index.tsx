@@ -12,7 +12,7 @@ const MovieDetailsPage = () => {
 
   if (error) {
     console.error("Error fetching movie data:", error);
-    return <p>Error: {error.message}</p>;
+    return <p>Sorry, there was an error fetching the movie details.</p>;
   }
 
   if (isLoading) {
