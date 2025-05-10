@@ -18,17 +18,20 @@ const LoginPage = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch("http://localhost:3000/api/auth/login", {
-        // Corrected port to 3000 based on common usage, was 300 in prompt
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: emailInput.value,
-          password: passwordInput.value,
-        }),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE}/auth/login`,
+        {
+          // Corrected port to 3000 based on common usage, was 300 in prompt
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: emailInput.value,
+            password: passwordInput.value,
+          }),
+        }
+      );
 
       const data = await response.json();
 

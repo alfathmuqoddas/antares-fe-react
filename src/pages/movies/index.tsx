@@ -5,7 +5,7 @@ import { useNavigate } from "react-router";
 const MoviesPage = () => {
   const navigate = useNavigate();
   const { data, error, isLoading } = useSWR(
-    "http://localhost:3000/api/movies",
+    `${import.meta.env.VITE_API_BASE}/movies`,
     fetcher
   );
 

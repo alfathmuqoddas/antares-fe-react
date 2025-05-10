@@ -6,7 +6,7 @@ import useSWR from "swr";
 const MovieDetailsPage = () => {
   const { id } = useParams();
   const { data, error, isLoading } = useSWR(
-    `http://localhost:3000/api/movies/${id}/showtimes`,
+    `${import.meta.env.VITE_API_BASE}/movies/${id}/showtimes`,
     fetcher
   );
 
