@@ -31,8 +31,6 @@ const MovieDetailsPage = () => {
         <h1 className="font-bold mb-4">
           <span className="font-normal">Showtimes for movie</span> {title}
         </h1>
-        {isLoading && <p>Loading...</p>}
-        {error && <p>Error: {error.message}</p>}
         {/* {data && <pre>Data: {JSON.stringify(data, null, 2)}</pre>} */}
         {theaters.length > 0 ? (
           <section className="flex flex-col gap-4">

@@ -9,12 +9,23 @@ const MoviesPage = () => {
     fetcher
   );
 
+  if (error) {
+    console.error("Error fetching movie data:", error);
+    return <p>Error: {error.message}</p>;
+  }
+
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
+
+  if (!data) {
+    return <p>No data found.</p>;
+  }
+
   return (
     <>
       <section className="" aria-label="movies-page">
         <h1 className="font-bold mb-4">Movies at Antares</h1>
-        {isLoading && <p>Loading...</p>}
-        {error && <p>Error: {error.message}</p>}
         {/* {data && <pre>Data: {JSON.stringify(data, null, 2)}</pre>} */}
         {/* grid of movies card with 4 columns down to 2 columns on mobile */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
