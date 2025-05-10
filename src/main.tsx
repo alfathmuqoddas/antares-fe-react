@@ -12,6 +12,7 @@ const RegisterPage = lazy(() => import("./pages/register/index.tsx"));
 const UnauthorizedPage = lazy(() => import("./pages/unauthorized/index.tsx"));
 const NotFoundPage = lazy(() => import("./pages/notFound/index.tsx"));
 const MoviesPage = lazy(() => import("./pages/movies/index.tsx"));
+const MovieDetailsPage = lazy(() => import("./pages/movieDetails/index.tsx"));
 const CinemasPage = lazy(() => import("./pages/cinemas/index.tsx"));
 import ProtectedRoute from "./layout/protectedLayout.tsx";
 import MainLayout from "./layout/mainLayout.tsx";
@@ -51,6 +52,14 @@ createRoot(document.getElementById("root")!).render(
               element={
                 <Suspense fallback={<LoadingPage />}>
                   <MoviesPage />
+                </Suspense>
+              }
+            />
+            <Route
+              path="movies/:id"
+              element={
+                <Suspense fallback={<LoadingPage />}>
+                  <MovieDetailsPage />
                 </Suspense>
               }
             />
