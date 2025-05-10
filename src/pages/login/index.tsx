@@ -40,6 +40,7 @@ const LoginPage = () => {
       console.log("Login successful:", data);
       login(data);
       alert("Login successful! Redirecting...");
+      navigate("/");
       emailInput.setValue("");
       passwordInput.setValue("");
     } catch (err: any) {
@@ -47,7 +48,6 @@ const LoginPage = () => {
       setError(err.message || "An unexpected error occurred.");
     } finally {
       setIsLoading(false);
-      navigate("/");
     }
   };
 
