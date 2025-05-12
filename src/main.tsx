@@ -22,6 +22,9 @@ const AdminShowtimesPage = lazy(
 const AdminTheatersPage = lazy(
   () => import("./pages/admin/theaters/index.tsx")
 );
+const AdminTheatersDetailsPage = lazy(
+  () => import("./pages/admin/theaters/details/index.tsx")
+);
 import ProtectedRoute from "./layout/protectedLayout.tsx";
 import MainLayout from "./layout/mainLayout.tsx";
 
@@ -89,6 +92,14 @@ createRoot(document.getElementById("root")!).render(
                 element={
                   <Suspense fallback={<LoadingPage />}>
                     <AdminTheatersPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="theaters/:id"
+                element={
+                  <Suspense fallback={<LoadingPage />}>
+                    <AdminTheatersDetailsPage />
                   </Suspense>
                 }
               />

@@ -1,12 +1,12 @@
 import useSWR from "swr";
 import { fetcher } from "@/lib/fetcher";
-import { useNavigate, Link } from "react-router";
+import { useNavigate } from "react-router";
 import {
   Table,
   TableBody,
-  TableCaption,
+  //   TableCaption,
   TableCell,
-  TableFooter,
+  //   TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -15,6 +15,7 @@ import NewTheaterModal from "./modal/newTheaterModal";
 import UpdateTheaterModal from "./modal/updateTheaterModal";
 
 const AdminTheatersPage = () => {
+  const navigate = useNavigate();
   const { data, error, isLoading } = useSWR(
     `${import.meta.env.VITE_API_BASE}/theaters`,
     fetcher
@@ -52,7 +53,14 @@ const AdminTheatersPage = () => {
           <TableBody>
             {data?.map((theater: any) => (
               <TableRow key={theater.id}>
-                <TableCell>{theater.name}</TableCell>
+                <TableCell>
+                  <span
+                    onClick={() => navigate(`${theater.id}`)}
+                    className="hover:underline hover:underline-offset-2 font-semibold hover:cursor-pointer"
+                  >
+                    {theater.name}
+                  </span>
+                </TableCell>
                 <TableCell>{theater.state}</TableCell>
                 <TableCell>{theater.city}</TableCell>
                 <TableCell>{theater.zip}</TableCell>
