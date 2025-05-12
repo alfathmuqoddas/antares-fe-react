@@ -34,8 +34,8 @@ const AdminTheatersDetailsPage = () => {
   return (
     <>
       <section className="" aria-label="admin-theaters-details-page">
-        <h1 className="font-bold mb-4">Theater Details</h1>
-        <section className="rounded-xl bg-gray-200 p-4 mb-8">
+        <h1 className="text-xl font-bold mb-4">Theater Details</h1>
+        <section className="rounded-lg bg-gray-100 p-4 mb-8">
           <div className="table">
             <div className="table-row">
               <div className="table-cell pr-16">Name</div>
@@ -61,50 +61,52 @@ const AdminTheatersDetailsPage = () => {
         </section>
         <section>
           <div className="flex justify-between items-center mb-4">
-            <h2 className="font-bold">Manage Screens</h2>
+            <h1 className="text-xl font-bold">Manage Screens</h1>
             <div>
               <NewScreenModal theaterId={id || ""} />
             </div>
           </div>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Screen Type</TableHead>
-                <TableHead>Capacity</TableHead>
-                <TableHead>Ticket Price</TableHead>
-                <TableHead>Layout</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
+          <section className="rounded-lg p-4 shadow">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Screen Type</TableHead>
+                  <TableHead>Capacity</TableHead>
+                  <TableHead>Ticket Price</TableHead>
+                  <TableHead>Layout</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
 
-            {screens.length > 0 ? (
-              <TableBody>
-                {screens.map((screen: any) => (
-                  <TableRow key={screen.id}>
-                    <TableCell>{screen.name}</TableCell>
-                    <TableCell>{screen.screenType}</TableCell>
-                    <TableCell>{screen.capacity}</TableCell>
-                    <TableCell>{screen.ticketPrice}</TableCell>
-                    <TableCell>{screen.layoutDescription}</TableCell>
-                    <TableCell>
-                      <UpdateScreenModal screen={screen} />
+              {screens.length > 0 ? (
+                <TableBody>
+                  {screens.map((screen: any) => (
+                    <TableRow key={screen.id}>
+                      <TableCell>{screen.name}</TableCell>
+                      <TableCell>{screen.screenType}</TableCell>
+                      <TableCell>{screen.capacity}</TableCell>
+                      <TableCell>{screen.ticketPrice}</TableCell>
+                      <TableCell>{screen.layoutDescription}</TableCell>
+                      <TableCell>
+                        <UpdateScreenModal screen={screen} />
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              ) : (
+                <TableBody>
+                  <TableRow>
+                    <TableCell colSpan={6}>
+                      <div className="text-center">
+                        <p>No screens found</p>
+                      </div>
                     </TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            ) : (
-              <TableBody>
-                <TableRow>
-                  <TableCell colSpan={6}>
-                    <div className="text-center">
-                      <p>No screens found</p>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            )}
-          </Table>
+                </TableBody>
+              )}
+            </Table>
+          </section>
         </section>
       </section>
     </>

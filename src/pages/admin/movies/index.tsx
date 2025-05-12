@@ -1,6 +1,5 @@
 import useSWR from "swr";
 import { fetcher } from "@/lib/fetcher";
-import { useNavigate, Link } from "react-router";
 import {
   Table,
   TableBody,
@@ -33,13 +32,13 @@ const AdminMoviesPage = () => {
 
   return (
     <>
-      <section className="" aria-label="admin-movies-page">
-        <div className="flex justify-between items-center mb-4">
-          <h1 className="font-bold">Manage Movies</h1>
-          <div>
-            <NewMovieModal />
-          </div>
+      <header className="flex justify-between items-center mb-4">
+        <h1 className="text-xl font-bold">Manage Movies</h1>
+        <div>
+          <NewMovieModal />
         </div>
+      </header>
+      <section className="rounded-lg p-4 shadow" aria-label="admin-movies-page">
         {/* table for movies data just title, released date and runtime */}
         <Table>
           <TableHeader>

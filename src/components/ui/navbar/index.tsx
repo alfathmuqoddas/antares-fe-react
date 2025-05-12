@@ -1,10 +1,13 @@
 // src/components/Navbar.jsx
-import { useState, useEffect, useRef, Dispatch, SetStateAction } from "react";
-import { Link, useNavigate } from "react-router";
+import { useState, useEffect, useRef } from "react";
+import { Link, useNavigate, useLocation } from "react-router";
 import useAuth from "@/store/useAuth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import NavLinkItem from "./navLinkItem";
+import DropdownLinkItem from "./dropdownLinkItem";
 
 const Navbar = () => {
+  const location = useLocation();
   const {
     user,
     isLoggedIn: isAuthenticated,
@@ -30,7 +33,6 @@ const Navbar = () => {
   const adminMenus = [
     { name: "Dashboard", to: "/admin" },
     { name: "Theaters", to: "/admin/theaters" },
-    { name: "Screens", to: "/admin/screens" },
     { name: "Movies", to: "/admin/movies" },
     { name: "Showtimes", to: "/admin/showtimes" },
   ];
@@ -75,7 +77,7 @@ const Navbar = () => {
 
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-10">
           {/* Left Section: Logo and Menu Items */}
           <div className="flex items-center">
@@ -87,7 +89,11 @@ const Navbar = () => {
             </Link>
             <div className="hidden md:ml-6 md:flex md:gap-4">
               {navMenus.map((menu, index) => (
-                <NavLinkItem key={index} to={menu.to}>
+                <NavLinkItem
+                  key={index}
+                  to={menu.to}
+                  isActive={location.pathname === menu.to}
+                >
                   {menu.name}
                 </NavLinkItem>
               ))}
@@ -147,64 +153,14 @@ const Navbar = () => {
       {/* Mobile Menu (optional, basic example) - can be expanded */}
       <div className="md:hidden">
         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-          <NavLinkItem to="/movies" isMobile>
-            Movies
-          </NavLinkItem>
-          <NavLinkItem to="/cinema" isMobile>
-            Cinema
-          </NavLinkItem>
+          {navMenus.map((menu, index) => (
+            <NavLinkItem key={index} to={menu.to} isMobile>
+              {menu.name}
+            </NavLinkItem>
+          ))}
         </div>
       </div>
     </nav>
-  );
-};
-
-// Helper component for Nav Links for cleaner code and active state (optional)
-const NavLinkItem = ({
-  to,
-  children,
-  isMobile = false,
-}: {
-  to: string;
-  children: any;
-  isMobile?: boolean;
-}) => {
-  // You can add active link styling here using useLocation and comparing paths
-  // For simplicity, basic styling is applied.
-  const baseClasses =
-    "text-gray-700 hover:bg-blue-500 hover:text-white rounded-full transition-colors";
-  const desktopClasses = "px-2 py-1 text-sm font-medium";
-  const mobileClasses = "block px-3 py-2 text-base font-medium";
-
-  return (
-    <Link
-      to={to}
-      className={`${baseClasses} ${isMobile ? mobileClasses : desktopClasses}`}
-    >
-      {children}
-    </Link>
-  );
-};
-
-// Helper component for Dropdown Links
-const DropdownLinkItem = ({
-  to,
-  children,
-  onClick,
-}: {
-  to: string;
-  children: any;
-  onClick: any;
-}) => {
-  return (
-    <Link
-      to={to}
-      onClick={onClick}
-      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors"
-      role="menuitem"
-    >
-      {children}
-    </Link>
   );
 };
 

@@ -32,13 +32,16 @@ const AdminTheatersPage = () => {
   }
   return (
     <>
-      <section className="" aria-label="admin-theaters-page">
-        <div className="flex justify-between items-center mb-4">
-          <h1 className="font-bold">Manage Theaters</h1>
-          <div>
-            <NewTheaterModal />
-          </div>
+      <header className="flex justify-between items-center mb-4">
+        <h1 className="text-xl font-bold">Manage Theaters</h1>
+        <div>
+          <NewTheaterModal />
         </div>
+      </header>
+      <section
+        className="rounded-lg p-4 shadow"
+        aria-label="admin-theaters-page"
+      >
         <Table>
           <TableHeader>
             <TableRow>

@@ -12,10 +12,9 @@ const RegisterPage = lazy(() => import("./pages/register/index.tsx"));
 const UnauthorizedPage = lazy(() => import("./pages/unauthorized/index.tsx"));
 const NotFoundPage = lazy(() => import("./pages/notFound/index.tsx"));
 const MoviesPage = lazy(() => import("./pages/movies/index.tsx"));
-const MovieDetailsPage = lazy(() => import("./pages/movieDetails/index.tsx"));
+const MovieDetailsPage = lazy(() => import("./pages/movies/details/index.tsx"));
 const CinemasPage = lazy(() => import("./pages/cinemas/index.tsx"));
 const AdminMoviesPage = lazy(() => import("./pages/admin/movies/index.tsx"));
-const AdminScreensPage = lazy(() => import("./pages/admin/screens/index.tsx"));
 const AdminShowtimesPage = lazy(
   () => import("./pages/admin/showtimes/index.tsx")
 );
@@ -100,14 +99,6 @@ createRoot(document.getElementById("root")!).render(
                 element={
                   <Suspense fallback={<LoadingPage />}>
                     <AdminTheatersDetailsPage />
-                  </Suspense>
-                }
-              />
-              <Route
-                path="screens"
-                element={
-                  <Suspense fallback={<LoadingPage />}>
-                    <AdminScreensPage />
                   </Suspense>
                 }
               />
