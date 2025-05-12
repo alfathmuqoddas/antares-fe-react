@@ -22,6 +22,23 @@ const Navbar = () => {
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const avatarRef = useRef<HTMLDivElement | null>(null);
 
+  const navMenus = [
+    { name: "Movies", to: "/movies" },
+    { name: "Cinema", to: "/cinema" },
+  ];
+
+  const adminMenus = [
+    { name: "Dashboard", to: "/admin" },
+    { name: "Theaters", to: "/admin/theaters" },
+    { name: "Screens", to: "/admin/screens" },
+    { name: "Movies", to: "/admin/movies" },
+    { name: "Showtimes", to: "/admin/showtimes" },
+  ];
+
+  if (roles?.includes("admin")) {
+    navMenus.push(...adminMenus);
+  }
+
   const getInitials = (name: string) => {
     if (!name) return "";
     const names = name.split(" ");
@@ -68,9 +85,12 @@ const Navbar = () => {
             >
               Antares
             </Link>
-            <div className="hidden md:ml-6 md:flex md:space-x-4">
-              <NavLinkItem to="/movies">Movies</NavLinkItem>
-              <NavLinkItem to="/cinema">Cinema</NavLinkItem>
+            <div className="hidden md:ml-6 md:flex md:gap-4">
+              {navMenus.map((menu, index) => (
+                <NavLinkItem key={index} to={menu.to}>
+                  {menu.name}
+                </NavLinkItem>
+              ))}
               {/* Add more links as needed */}
             </div>
           </div>
@@ -115,7 +135,7 @@ const Navbar = () => {
             ) : (
               <Link
                 to="/login"
-                className="ml-4 px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-main hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-light transition-colors"
+                className="ml-4 px-4 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-light transition-colors"
               >
                 Login
               </Link>
@@ -152,9 +172,9 @@ const NavLinkItem = ({
   // You can add active link styling here using useLocation and comparing paths
   // For simplicity, basic styling is applied.
   const baseClasses =
-    "text-gray-700 hover:bg-gray-50 hover:text-primary-dark transition-colors";
-  const desktopClasses = "px-2 py-2 rounded-md text-sm font-medium";
-  const mobileClasses = "block px-3 py-2 rounded-md text-base font-medium";
+    "text-gray-700 hover:bg-blue-500 hover:text-white rounded-full transition-colors";
+  const desktopClasses = "px-2 py-1 text-sm font-medium";
+  const mobileClasses = "block px-3 py-2 text-base font-medium";
 
   return (
     <Link

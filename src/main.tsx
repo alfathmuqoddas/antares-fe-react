@@ -14,6 +14,14 @@ const NotFoundPage = lazy(() => import("./pages/notFound/index.tsx"));
 const MoviesPage = lazy(() => import("./pages/movies/index.tsx"));
 const MovieDetailsPage = lazy(() => import("./pages/movieDetails/index.tsx"));
 const CinemasPage = lazy(() => import("./pages/cinemas/index.tsx"));
+const AdminMoviesPage = lazy(() => import("./pages/admin/movies/index.tsx"));
+const AdminScreensPage = lazy(() => import("./pages/admin/screens/index.tsx"));
+const AdminShowtimesPage = lazy(
+  () => import("./pages/admin/showtimes/index.tsx")
+);
+const AdminTheatersPage = lazy(
+  () => import("./pages/admin/theaters/index.tsx")
+);
 import ProtectedRoute from "./layout/protectedLayout.tsx";
 import MainLayout from "./layout/mainLayout.tsx";
 
@@ -71,8 +79,43 @@ createRoot(document.getElementById("root")!).render(
                 </Suspense>
               }
             />
-            <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
-              <Route path="admin" element={<>Admin</>} />
+            <Route
+              path="admin"
+              element={<ProtectedRoute allowedRoles={["admin"]} />}
+            >
+              <Route index element={<>Admin</>} />
+              <Route
+                path="theaters"
+                element={
+                  <Suspense fallback={<LoadingPage />}>
+                    <AdminTheatersPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="screens"
+                element={
+                  <Suspense fallback={<LoadingPage />}>
+                    <AdminScreensPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="movies"
+                element={
+                  <Suspense fallback={<LoadingPage />}>
+                    <AdminMoviesPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="showtimes"
+                element={
+                  <Suspense fallback={<LoadingPage />}>
+                    <AdminShowtimesPage />
+                  </Suspense>
+                }
+              />
             </Route>
             <Route path="dashboard" element={<>User</>} />
             <Route path="test" element={<>Test</>} />

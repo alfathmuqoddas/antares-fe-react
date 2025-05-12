@@ -4,8 +4,9 @@ import { useNavigate } from "react-router";
 
 const MoviesPage = () => {
   const navigate = useNavigate();
+  console.log(import.meta.env.VITE_API_BASE);
   const { data, error, isLoading } = useSWR(
-    `${import.meta.env.VITE_API_BASE}/movies`,
+    `${import.meta.env.VITE_API_BASE}/movies/now-playing`,
     fetcher
   );
 
