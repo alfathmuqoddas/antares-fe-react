@@ -11,11 +11,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import NewMovieModal from "./modal/new";
-import UpdateMovieModal from "./modal/update";
+import NewMovieModal from "./modal/newMovieModal";
+import UpdateMovieModal from "./modal/updateMovieModal";
+import { Badge } from "@/components/ui/badge";
 
 const AdminMoviesPage = () => {
-  const navigate = useNavigate();
   const { data, error, isLoading } = useSWR(
     `${import.meta.env.VITE_API_BASE}/movies`,
     fetcher
@@ -55,16 +55,17 @@ const AdminMoviesPage = () => {
             {data?.map((movie: any) => (
               <TableRow key={movie.id}>
                 <TableCell>
-                  <Link
-                    to={movie.id}
-                    className="hover:underline hover:underline-offset-2 font-semibold"
-                  >
-                    {movie.title}
-                  </Link>
+                  <span className="font-semibold">{movie.title}</span>
                 </TableCell>
                 <TableCell>{movie.released}</TableCell>
                 <TableCell>{movie.runtime}</TableCell>
-                <TableCell>{movie.nowPlaying ? "Yes" : "No"}</TableCell>
+                <TableCell>
+                  {movie.nowPlaying ? (
+                    <Badge>Yes</Badge>
+                  ) : (
+                    <Badge variant={"destructive"}>No</Badge>
+                  )}
+                </TableCell>
                 <TableCell>
                   <UpdateMovieModal movie={movie} />
                 </TableCell>

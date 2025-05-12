@@ -53,14 +53,14 @@ const UpdateMovieModal = ({ movie }: { movie: any }) => {
     <Dialog>
       <DialogTrigger asChild>
         <span className="underline underline-offset-2 font-semibold text-orange-400 hover:cursor-pointer">
-          details
+          edit
         </span>
       </DialogTrigger>
       <DialogContent className="">
         <DialogHeader>
           <DialogTitle>Movie Details</DialogTitle>
         </DialogHeader>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-4 py-4">
           <div className="flex flex-col gap-2">
             <Label htmlFor="movieTitle">Title</Label>
             <Input
@@ -82,7 +82,7 @@ const UpdateMovieModal = ({ movie }: { movie: any }) => {
                 })
               }
             >
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-full">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
