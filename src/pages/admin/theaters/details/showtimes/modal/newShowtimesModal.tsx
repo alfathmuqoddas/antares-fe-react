@@ -41,18 +41,18 @@ const NewShowtimesModal = ({ screens }: { screens: any }) => {
     setIsLoadingSubmit(true);
     try {
       console.log({ showtimeForm });
-      //   const res = await fetch(`${import.meta.env.VITE_API_BASE}/showtimes`, {
-      //     method: "POST",
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //     },
-      //     body: JSON.stringify({
-      //       ...showtimeForm,
-      //     }),
-      //   });
-      //   const data = await res.json();
-      //   setIsLoadingSubmit(false);
-      //   alert(data.message);
+      const res = await fetch(`${import.meta.env.VITE_API_BASE}/showtimes`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...showtimeForm,
+        }),
+      });
+      const data = await res.json();
+      setIsLoadingSubmit(false);
+      alert(data.message);
     } catch (error) {
       console.error("Error fetching movie data:", error);
       setIsLoadingSubmit(false);
