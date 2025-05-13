@@ -2,6 +2,7 @@ import { useParams } from "react-router";
 import { fetcher } from "@/lib/fetcher";
 import { formatTime } from "@/utils/formatTime";
 import useSWR from "swr";
+import dayjs from "dayjs";
 
 const MovieDetailsPage = () => {
   const { id } = useParams();
@@ -38,16 +39,21 @@ const MovieDetailsPage = () => {
               <div key={theater.id} className="p-4 bg-gray-200 rounded-xl">
                 <h2 className="font-bold mb-4">{theater.name}</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {theater.showtimes.map((showtime: any) => (
-                    <div
-                      key={showtime.id}
-                      className="rounded-lg bg-white p-2 shadow-md hover:cursor-pointer"
-                    >
-                      <h3 className="text-center">
-                        {formatTime(showtime.startTime)}
-                      </h3>
-                    </div>
-                  ))}
+                  {theater.showtimes.map((showtime: any) => {
+                    console.log({
+                      showtime: dayjs(showtime.startTime).format(),
+                    });
+                    return (
+                      <div
+                        key={showtime.id}
+                        className="rounded-lg bg-white p-2 shadow-md hover:cursor-pointer"
+                      >
+                        <h3 className="text-center">
+                          {dayjs(showtime.startTime).format("hh:mm")}
+                        </h3>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             ))}

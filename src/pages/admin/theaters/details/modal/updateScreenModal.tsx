@@ -97,23 +97,7 @@ const UpdateScreenModal = ({ screen }: { screen: any }) => {
               }
             />
           </div>
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="screenTicketPrice" className="text-right mr-4">
-              Ticket Price
-            </Label>
-            <Input
-              id="theaterZip"
-              placeholder="insert ticket price"
-              type="number"
-              value={screenData.ticketPrice}
-              onChange={(e) =>
-                setScreenData({
-                  ...screenData,
-                  ticketPrice: Number(e.target.value),
-                })
-              }
-            />
-          </div>
+
           <div className="flex flex-col gap-2">
             <Label
               htmlFor="screenLayoutDescription"
