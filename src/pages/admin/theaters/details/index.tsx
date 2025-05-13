@@ -13,6 +13,7 @@ import { useParams } from "react-router";
 import { fetcher } from "@/lib/fetcher";
 import NewScreenModal from "./modal/newScreenModal";
 import UpdateScreenModal from "./modal/updateScreenModal";
+import ManageShowtimes from "./showtimes";
 
 const AdminTheatersDetailsPage = () => {
   const { id } = useParams();
@@ -59,21 +60,20 @@ const AdminTheatersDetailsPage = () => {
             </div>
           </div>
         </section>
-        <section>
+        <section className="mb-8">
           <div className="flex justify-between items-center mb-4">
             <h1 className="text-xl font-bold">Manage Screens</h1>
             <div>
               <NewScreenModal theaterId={id || ""} />
             </div>
           </div>
-          <section className="rounded-lg p-4 shadow">
+          <section className="rounded-lg p-4 shadow bg-white">
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Name</TableHead>
                   <TableHead>Screen Type</TableHead>
                   <TableHead>Capacity</TableHead>
-                  <TableHead>Ticket Price</TableHead>
                   <TableHead>Layout</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
@@ -86,7 +86,6 @@ const AdminTheatersDetailsPage = () => {
                       <TableCell>{screen.name}</TableCell>
                       <TableCell>{screen.screenType}</TableCell>
                       <TableCell>{screen.capacity}</TableCell>
-                      <TableCell>{screen.ticketPrice}</TableCell>
                       <TableCell>{screen.layoutDescription}</TableCell>
                       <TableCell>
                         <UpdateScreenModal screen={screen} />
@@ -108,6 +107,7 @@ const AdminTheatersDetailsPage = () => {
             </Table>
           </section>
         </section>
+        <ManageShowtimes theaterId={id || ""} screens={screens} />
       </section>
     </>
   );

@@ -39,7 +39,7 @@ const AdminTheatersPage = () => {
         </div>
       </header>
       <section
-        className="rounded-lg p-4 shadow"
+        className="rounded-lg p-4 shadow bg-white"
         aria-label="admin-theaters-page"
       >
         <Table>

@@ -38,7 +38,10 @@ const AdminMoviesPage = () => {
           <NewMovieModal />
         </div>
       </header>
-      <section className="rounded-lg p-4 shadow" aria-label="admin-movies-page">
+      <section
+        className="rounded-lg p-4 shadow bg-white"
+        aria-label="admin-movies-page"
+      >
         {/* table for movies data just title, released date and runtime */}
         <Table>
           <TableHeader>

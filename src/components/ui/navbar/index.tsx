@@ -32,9 +32,8 @@ const Navbar = () => {
 
   const adminMenus = [
     { name: "Dashboard", to: "/admin" },
-    { name: "Theaters", to: "/admin/theaters" },
-    { name: "Movies", to: "/admin/movies" },
-    { name: "Showtimes", to: "/admin/showtimes" },
+    { name: "Manage Theaters", to: "/admin/theaters" },
+    { name: "Manage Movies", to: "/admin/movies" },
   ];
 
   if (roles?.includes("admin")) {
