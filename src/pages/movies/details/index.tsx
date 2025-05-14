@@ -40,7 +40,7 @@ const MovieDetailsPage = () => {
                 <h2 className="font-bold mb-4">{theater.name}</h2>
                 <div className="flex flex-col gap-2">
                   {Object.entries(theater.screenTypes).map(
-                    ([screenType, showtimes]: any) => {
+                    ([screenType, showtimes]: [string, any]) => {
                       return (
                         <div key={screenType}>
                           <h3 className="mb-2">{screenType}</h3>

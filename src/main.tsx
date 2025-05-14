@@ -14,6 +14,9 @@ const NotFoundPage = lazy(() => import("./pages/notFound/index.tsx"));
 const MoviesPage = lazy(() => import("./pages/movies/index.tsx"));
 const MovieDetailsPage = lazy(() => import("./pages/movies/details/index.tsx"));
 const CinemasPage = lazy(() => import("./pages/cinemas/index.tsx"));
+const CinemasDetailsPage = lazy(
+  () => import("./pages/cinemas/details/index.tsx")
+);
 const AdminMoviesPage = lazy(() => import("./pages/admin/movies/index.tsx"));
 const AdminShowtimesPage = lazy(
   () => import("./pages/admin/showtimes/index.tsx")
@@ -78,6 +81,14 @@ createRoot(document.getElementById("root")!).render(
               element={
                 <Suspense fallback={<LoadingPage />}>
                   <CinemasPage />
+                </Suspense>
+              }
+            />
+            <Route
+              path="cinema/:id"
+              element={
+                <Suspense fallback={<LoadingPage />}>
+                  <CinemasDetailsPage />
                 </Suspense>
               }
             />
