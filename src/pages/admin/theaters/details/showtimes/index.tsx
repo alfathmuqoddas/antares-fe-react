@@ -69,6 +69,7 @@ const ManageShowtimes = ({
             <TableRow>
               <TableHead>Movie Name</TableHead>
               <TableHead>Screen Name</TableHead>
+              <TableHead>Screen Type</TableHead>
               <TableHead>Ticket Price</TableHead>
               <TableHead>Date</TableHead>
               <TableHead>Start Time</TableHead>
@@ -81,6 +82,7 @@ const ManageShowtimes = ({
                 <TableRow key={showtime.id}>
                   <TableCell>{showtime.movie.title}</TableCell>
                   <TableCell>{showtime.screen.name}</TableCell>
+                  <TableCell>{showtime.screen.screenType}</TableCell>
                   <TableCell>{showtime.ticketPrice}</TableCell>
                   <TableCell>
                     {dayjs(showtime.startTime).format("DD/MM/YYYY")}
