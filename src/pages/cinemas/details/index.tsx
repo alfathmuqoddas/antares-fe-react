@@ -42,7 +42,7 @@ const CinemaDetailsPage = () => {
                     ([screenType, showtimes]: any) => (
                       <div key={screenType} className="flex flex-col">
                         <h2 className="font-bold mb-1">{screenType}</h2>
-                        <div className="grid grid-cols-12 gap-2">
+                        <div className="grid grid-cols-4 md:grid-cols-8 lg:grid-cols-12 gap-4">
                           {showtimes.map((showtime: any) => (
                             <div
                               key={showtime.id}
