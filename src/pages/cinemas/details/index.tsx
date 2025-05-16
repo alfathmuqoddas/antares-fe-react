@@ -25,10 +25,10 @@ const CinemaDetailsPage = () => {
     <>
       <section aria-label="cinema-details-page">
         <div>
-          <h1 className="text-xl font-bold mb-4">Showtimes</h1>
+          <h1 className="text-xl font-bold mb-4">Showtimes for {data.name}</h1>
         </div>
         <section className="flex flex-col gap-4">
-          {data &&
+          {data.movies.length > 0 ? (
             data.movies?.map((movie: any) => (
               <div
                 key={movie.id}
@@ -57,7 +57,10 @@ const CinemaDetailsPage = () => {
                   )}
                 </div>
               </div>
-            ))}
+            ))
+          ) : (
+            <>No showtimes availbale for this theater</>
+          )}
         </section>
       </section>
     </>
