@@ -1,6 +1,7 @@
 import useSWR from "swr";
 import { fetcher } from "@/lib/fetcher";
 import { useNavigate } from "react-router";
+import { MapPin, Map, Locate } from "lucide-react";
 
 const CinemasPage = () => {
   const navigate = useNavigate();
@@ -26,13 +27,27 @@ const CinemasPage = () => {
           {data.map((theater: any) => (
             <div
               key={theater.id}
-              className="p-4 bg-gray-200 rounded-xl mb-4 hover:cursor-pointer"
+              className="p-4 bg-white border rounded-md mb-4 hover:cursor-pointer  hover:shadow"
               onClick={() => navigate(`${theater.id}`)}
             >
-              <h2 className="font-bold">{theater.name}</h2>
+              <h2 className="font-bold mb-2">{theater.name}</h2>
+              <div className="flex gap-2 items-center">
+                <MapPin className="h-4 w-4" />
+                <p className="text-sm">{theater.address}</p>
+              </div>
+              <div className="flex gap-2 items-center">
+                <Locate className="h-4 w-4" />
+                <p className="text-sm">{theater.city}</p>
+                <p className="text-sm">{theater.zip}</p>
+              </div>
+              <div className="flex gap-2 items-center">
+                <Map className="h-4 w-4" />
+                <p className="text-sm">{theater.state}</p>
+              </div>
             </div>
           ))}
         </section>
+        {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
       </section>
     </>
   );

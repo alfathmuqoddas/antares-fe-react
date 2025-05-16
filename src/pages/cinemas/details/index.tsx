@@ -60,7 +60,7 @@ const CinemaDetailsPage = () => {
           ) : (
             <>No showtimes availbale for this theater</>
           )}
-          <pre>{JSON.stringify(data, null, 2)}</pre>
+          {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
         </section>
       </section>
     </>
