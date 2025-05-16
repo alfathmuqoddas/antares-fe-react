@@ -88,7 +88,7 @@ const ManageShowtimes = ({
                     {dayjs(showtime.startTime).format("DD/MM/YYYY")}
                   </TableCell>
                   <TableCell>
-                    {dayjs(showtime.startTime).format("hh:mm")}
+                    {dayjs(showtime.startTime).format("H:mm")}
                   </TableCell>
                   <TableCell>
                     <Trash2

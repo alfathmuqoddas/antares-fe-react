@@ -2,6 +2,8 @@ import useSWR from "swr";
 import { fetcher } from "@/lib/fetcher";
 import { useParams } from "react-router";
 import TheaterMovieCard from "@/components/ui/theaterMovieCard";
+import { Button } from "@/components/ui/button";
+import dayjs from "dayjs";
 
 const CinemaDetailsPage = () => {
   const { id } = useParams();
@@ -44,12 +46,9 @@ const CinemaDetailsPage = () => {
                         <h2 className="font-bold mb-1">{screenType}</h2>
                         <div className="grid grid-cols-4 md:grid-cols-8 lg:grid-cols-12 gap-4">
                           {showtimes.map((showtime: any) => (
-                            <div
-                              key={showtime.id}
-                              className="bg-white border border-gray-500 rounded-md p-1 text-center hover:cursor-pointer"
-                            >
-                              <p>{showtime.startTime.substr(11, 5)}</p>
-                            </div>
+                            <Button key={showtime.id} variant={"outline"}>
+                              {dayjs(showtime.startTime).format("H:mm")}
+                            </Button>
                           ))}
                         </div>
                       </div>
@@ -61,6 +60,7 @@ const CinemaDetailsPage = () => {
           ) : (
             <>No showtimes availbale for this theater</>
           )}
+          <pre>{JSON.stringify(data, null, 2)}</pre>
         </section>
       </section>
     </>

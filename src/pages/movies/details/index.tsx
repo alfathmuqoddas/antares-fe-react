@@ -1,8 +1,8 @@
 import { useParams } from "react-router";
 import { fetcher } from "@/lib/fetcher";
-import { formatTime } from "@/utils/formatTime";
 import useSWR from "swr";
 import dayjs from "dayjs";
+import { Button } from "@/components/ui/button";
 
 const MovieDetailsPage = () => {
   const { id } = useParams();
@@ -36,9 +36,14 @@ const MovieDetailsPage = () => {
         {theaters.length > 0 ? (
           <section className="flex flex-col gap-4">
             {theaters.map((theater: any) => (
-              <div key={theater.id} className="p-4 bg-gray-200 rounded-xl">
-                <h2 className="font-bold mb-4">{theater.name}</h2>
-                <div className="flex flex-col gap-2">
+              <div
+                key={theater.id}
+                className="bg-gray-100 rounded-md shadow overflow-hidden"
+              >
+                <div className="p-4 bg-white">
+                  <h2 className="font-bold uppercase">{theater.name}</h2>
+                </div>
+                <div className="flex flex-col gap-4 p-4">
                   {Object.entries(theater.screenTypes).map(
                     ([screenType, showtimes]: [string, any]) => {
                       return (
@@ -46,14 +51,9 @@ const MovieDetailsPage = () => {
                           <h3 className="mb-2">{screenType}</h3>
                           <div className="grid grid-cols-4 md:grid-cols-8 lg:grid-cols-12 gap-4">
                             {showtimes.map((showtime: any) => (
-                              <div
-                                key={showtime.id}
-                                className="rounded-lg bg-white p-2 shadow-md hover:cursor-pointer"
-                              >
-                                <h3 className="text-center">
-                                  {dayjs(showtime.startTime).format("hh:mm")}
-                                </h3>
-                              </div>
+                              <Button key={showtime.id} variant={"outline"}>
+                                {dayjs(showtime.startTime).format("H:mm")}
+                              </Button>
                             ))}
                           </div>
                         </div>
