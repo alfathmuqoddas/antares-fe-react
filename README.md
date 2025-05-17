@@ -40,15 +40,15 @@ npm run dev
 
 ## Screenshots
 
-1. [sc1](https://ibb.co.com/RkgZNkTt)
-2. [sc2](https://ibb.co.com/FkRf8Fsb)
-3. [sc3](https://ibb.co.com/pvmW24kc)
-4. [sc4](https://ibb.co.com/8g8FWfm0)
-5. [sc5](https://ibb.co.com/zVjCcVPW)
-6. [sc6](https://ibb.co.com/5hZX8vGC)
-7. [sc7](https://ibb.co.com/ZRrdVFx1)
-8. [sc8](https://ibb.co.com/Y4SyXMBy)
-9. [sc9](https://ibb.co.com/sd3Lx7Zj)
+![Homepage](./screenshots/antares-index.png)
+![Movies Page](./screenshots/antares-movies.png)
+![Movie Showtimes](./screenshots/antares-movie-showtimes.png)
+![Theaters Page](./screenshots/antares-theaters.png)
+![Theater Showtimes](./screenshots/antares-theater-showtime.png)
+![Admin Manage Movies](./screenshots/antares-manage-movies.png)
+![Admin Manage Theaters Details](./screenshots/antares-manage-theater-details.png)
+![Admin Theaters](./screenshots/antares-manage-theaters.png)
+![New Theaters](./screenshots/anatares-new-theater.png)
 
 ## Contributing
 
