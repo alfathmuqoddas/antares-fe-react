@@ -3,6 +3,7 @@ import { fetcher } from "@/lib/fetcher";
 import useSWR from "swr";
 import dayjs from "dayjs";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router";
 
 const MovieDetailsPage = () => {
   const { id } = useParams();
@@ -41,14 +42,19 @@ const MovieDetailsPage = () => {
                 className="bg-gray-100 rounded-md shadow overflow-hidden"
               >
                 <div className="p-4 bg-white">
-                  <h2 className="font-bold uppercase">{theater.name}</h2>
+                  <Link
+                    to={`/cinema/${theater.id}`}
+                    className="font-bold uppercase hover:underline hover:underline-offset-4"
+                  >
+                    {theater.name}
+                  </Link>
                 </div>
                 <div className="flex flex-col gap-4 p-4">
                   {Object.entries(theater.screenTypes).map(
                     ([screenType, showtimes]: [string, any]) => {
                       return (
                         <div key={screenType}>
-                          <h3 className="mb-2">{screenType}</h3>
+                          <h3 className="font-bold mb-2">{screenType}</h3>
                           <div className="grid grid-cols-4 md:grid-cols-8 lg:grid-cols-12 gap-4">
                             {showtimes.map((showtime: any) => (
                               <Button key={showtime.id} variant={"outline"}>

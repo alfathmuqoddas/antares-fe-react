@@ -36,9 +36,7 @@ const CinemaDetailsPage = () => {
                 key={movie.id}
                 className="rounded-lg bg-gray-50 shadow overflow-hidden"
               >
-                <div>
-                  <TheaterMovieCard movie={movie} />
-                </div>
+                <TheaterMovieCard movie={movie} />
                 <div className="flex flex-col gap-4 p-4">
                   {Object.entries(movie.screenTypes).map(
                     ([screenType, showtimes]: any) => (

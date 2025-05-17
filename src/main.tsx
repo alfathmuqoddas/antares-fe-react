@@ -7,6 +7,7 @@ import App from "./App.tsx";
 import { SWRConfig } from "swr";
 import { fetcher } from "./lib/fetcher";
 import LoadingPage from "./pages/loading/index";
+import PublicLayout from "./layout/publicLayout.tsx";
 const LoginPage = lazy(() => import("./pages/login/index.tsx"));
 const RegisterPage = lazy(() => import("./pages/register/index.tsx"));
 const UnauthorizedPage = lazy(() => import("./pages/unauthorized/index.tsx"));
@@ -60,38 +61,40 @@ createRoot(document.getElementById("root")!).render(
                 </Suspense>
               }
             />
-            <Route
-              path="movies"
-              element={
-                <Suspense fallback={<LoadingPage />}>
-                  <MoviesPage />
-                </Suspense>
-              }
-            />
-            <Route
-              path="movies/:id"
-              element={
-                <Suspense fallback={<LoadingPage />}>
-                  <MovieDetailsPage />
-                </Suspense>
-              }
-            />
-            <Route
-              path="cinema"
-              element={
-                <Suspense fallback={<LoadingPage />}>
-                  <CinemasPage />
-                </Suspense>
-              }
-            />
-            <Route
-              path="cinema/:id"
-              element={
-                <Suspense fallback={<LoadingPage />}>
-                  <CinemasDetailsPage />
-                </Suspense>
-              }
-            />
+            <Route element={<PublicLayout />}>
+              <Route
+                path="movies"
+                element={
+                  <Suspense fallback={<LoadingPage />}>
+                    <MoviesPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="movies/:id"
+                element={
+                  <Suspense fallback={<LoadingPage />}>
+                    <MovieDetailsPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="cinema"
+                element={
+                  <Suspense fallback={<LoadingPage />}>
+                    <CinemasPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="cinema/:id"
+                element={
+                  <Suspense fallback={<LoadingPage />}>
+                    <CinemasDetailsPage />
+                  </Suspense>
+                }
+              />
+            </Route>
             <Route
               path="admin"
               element={<ProtectedRoute allowedRoles={["admin"]} />}

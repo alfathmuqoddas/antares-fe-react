@@ -1,7 +1,6 @@
 import useSWR from "swr";
 import { fetcher } from "@/lib/fetcher";
 import { useNavigate } from "react-router";
-import { Clock, Calendar1 } from "lucide-react";
 
 const MoviesPage = () => {
   const navigate = useNavigate();
