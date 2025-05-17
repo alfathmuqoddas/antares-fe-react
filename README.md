@@ -1,54 +1,59 @@
-# React + TypeScript + Vite
+# Antares Movie Booking App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is a movie booking app built with React and Tailwind CSS. This is the frontend of the Antares project, which is a movie booking app built with NestJS and TypeScript.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Login and Registration
+- Movie Search
+- Movie Details
+- Cinema Search
+- Cinema Details
+- Admin Panel
+  - Manage Theaters
+  - Manage Movies
+  - Manage Showtimes
 
-## Expanding the ESLint configuration
+## Getting Started
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+To get started, follow these steps:
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+1. Clone the repository:
+
+```bash
+git clone https://github.com/your-username/antares-fe-react.git
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+2. Install dependencies:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+```bash
+npm install
 ```
+
+3. Start the development server:
+
+```bash
+npm run dev
+```
+
+4. Open [http://localhost:5173](http://localhost:5173) in your browser to view the application.
+
+## Screenshots
+
+![1](https://ibb.co/RkgZNkTt)
+![2](https://ibb.co/FkRf8Fsb)
+![3](https://ibb.co/pvmW24kc)
+![4](https://ibb.co/8g8FWfm0)
+![5](https://ibb.co/zVjCcVPW)
+![6](https://ibb.co/5hZX8vGC)
+![7](https://ibb.co/ZRrdVFx1)
+![8](https://ibb.co/Y4SyXMBy)
+![9](https://ibb.co/sd3Lx7Zj)
+
+## Contributing
+
+Contributions are welcome! If you find a bug or have a suggestion, please open an issue or submit a pull request.
+
+## License
+
+This project is licensed under the MIT License.
