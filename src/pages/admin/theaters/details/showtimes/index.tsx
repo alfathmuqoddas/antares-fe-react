@@ -93,7 +93,9 @@ const ManageShowtimes = ({
                   <TableCell>
                     <Trash2
                       onClick={() => handleDeleteShowtime(showtime.id)}
-                      className="hover:cursor-pointer text-red-500 h-4 w-4"
+                      className={`hover:cursor-pointer text-red-500 h-4 w-4 ${
+                        isLoadingDelete && "text-gray-500"
+                      }`}
                     />
                   </TableCell>
                 </TableRow>

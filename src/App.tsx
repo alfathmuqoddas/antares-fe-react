@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
 
 function App() {

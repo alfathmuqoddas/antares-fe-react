@@ -4,7 +4,6 @@ export const fetcher = async (url: string, options?: RequestInit) => {
 
   if (!res.ok) {
     // You might want to parse the error response body as well
-    const errorText = await res.text();
     const error = new Error(
       `An error occurred while fetching the data: ${res.status} ${res.statusText}`
     );

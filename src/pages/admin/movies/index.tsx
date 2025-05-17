@@ -3,9 +3,7 @@ import { fetcher } from "@/lib/fetcher";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
