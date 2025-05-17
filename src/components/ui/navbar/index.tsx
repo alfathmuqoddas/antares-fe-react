@@ -27,7 +27,7 @@ const Navbar = () => {
 
   const navMenus = [
     { name: "Movies", to: "/movies" },
-    { name: "Cinema", to: "/cinema" },
+    { name: "Theaters", to: "/cinema" },
   ];
 
   const adminMenus = [

@@ -34,7 +34,7 @@ const NewShowtimesModal = ({ screens }: { screens: any }) => {
     data: moviesData,
     error: moviesError,
     isLoading: moviesLoading,
-  } = useSWR(`${import.meta.env.VITE_API_BASE}/movies`, fetcher);
+  } = useSWR(`${import.meta.env.VITE_API_BASE}/movies/now-playing`, fetcher);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
