@@ -27,7 +27,7 @@ const CinemasPage = () => {
           {data.map((theater: any) => (
             <div
               key={theater.id}
-              className="p-4 bg-white border rounded-md mb-4 hover:cursor-pointer  hover:shadow"
+              className="p-4 bg-white border rounded-md hover:cursor-pointer  hover:shadow"
               onClick={() => navigate(`${theater.id}`)}
             >
               <h2 className="font-bold mb-2">{theater.name}</h2>

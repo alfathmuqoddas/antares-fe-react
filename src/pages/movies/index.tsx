@@ -1,6 +1,7 @@
 import useSWR from "swr";
 import { fetcher } from "@/lib/fetcher";
 import { useNavigate } from "react-router";
+import { Clock, Calendar1 } from "lucide-react";
 
 const MoviesPage = () => {
   const navigate = useNavigate();
@@ -29,7 +30,7 @@ const MoviesPage = () => {
         <h1 className="text-xl font-bold mb-4">Movies at Antares</h1>
         {/* {data && <pre>Data: {JSON.stringify(data, null, 2)}</pre>} */}
         {/* grid of movies card with 4 columns down to 2 columns on mobile */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-8">
           {data?.map((movie: any) => (
             <div
               key={movie.id}
@@ -42,14 +43,14 @@ const MoviesPage = () => {
                 width={300}
                 height={445}
               />
-              <div className="flex flex-col pt-2 pb-4 text-center">
-                <h2 className="font-semibold text-center group-hover:text-white">
+              <div className="flex flex-col p-2 text-center group-hover:text-white">
+                <h2 className="font-semibold text-xl uppercase">
                   {movie.title}
                 </h2>
-                <div className="flex justify-center gap-4 text-sm text-gray-600 group-hover:text-white">
-                  <p>{movie.runtime}</p>
-                  <p>{movie.released}</p>
+                <div className="flex justify-center gap-2 text-sm">
+                  <p>{movie.runtime}</p>|<p>{movie.rated}</p>
                 </div>
+                <p className="text-sm">Released {movie.released}</p>
               </div>
             </div>
           ))}

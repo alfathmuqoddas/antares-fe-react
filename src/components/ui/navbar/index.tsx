@@ -5,6 +5,15 @@ import useAuth from "@/store/useAuth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import NavLinkItem from "./navLinkItem";
 import DropdownLinkItem from "./dropdownLinkItem";
+import {
+  Clapperboard,
+  Popcorn,
+  SquareActivity,
+  FileVideo,
+  FileVideo2,
+  Menu,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const Navbar = () => {
   const location = useLocation();
@@ -22,18 +31,27 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const avatarRef = useRef<HTMLDivElement | null>(null);
 
   const navMenus = [
-    { name: "Movies", to: "/movies" },
-    { name: "Theaters", to: "/cinema" },
+    { name: "Movies", to: "/movies", icon: <Clapperboard size={16} /> },
+    { name: "Theaters", to: "/cinema", icon: <Popcorn size={16} /> },
   ];
 
   const adminMenus = [
-    { name: "Dashboard", to: "/admin" },
-    { name: "Manage Theaters", to: "/admin/theaters" },
-    { name: "Manage Movies", to: "/admin/movies" },
+    { name: "Dashboard", to: "/admin", icon: <SquareActivity size={16} /> },
+    {
+      name: "Manage Theaters",
+      to: "/admin/theaters",
+      icon: <FileVideo2 size={16} />,
+    },
+    {
+      name: "Manage Movies",
+      to: "/admin/movies",
+      icon: <FileVideo size={16} />,
+    },
   ];
 
   if (roles?.includes("admin")) {
@@ -74,10 +92,19 @@ const Navbar = () => {
     };
   }, []);
 
+  const handleToggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-10">
+          <div className="flex md:hidden items-center gap-4">
+            <Button variant="ghost" onClick={handleToggleMobileMenu}>
+              <Menu size={24} />
+            </Button>
+          </div>
           {/* Left Section: Logo and Menu Items */}
           <div className="flex items-center">
             <Link
@@ -93,7 +120,10 @@ const Navbar = () => {
                   to={menu.to}
                   isActive={location.pathname === menu.to}
                 >
-                  {menu.name}
+                  <div className="flex items-center gap-1">
+                    <div>{menu.icon}</div>
+                    <p>{menu.name}</p>
+                  </div>
                 </NavLinkItem>
               ))}
               {/* Add more links as needed */}
@@ -150,11 +180,18 @@ const Navbar = () => {
       </div>
 
       {/* Mobile Menu (optional, basic example) - can be expanded */}
-      <div className="md:hidden">
+      <div
+        className={`md:hidden ${
+          isMobileMenuOpen ? "absolute" : "hidden"
+        } bg-white w-full`}
+      >
         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
           {navMenus.map((menu, index) => (
             <NavLinkItem key={index} to={menu.to} isMobile>
-              {menu.name}
+              <div className="flex items-center gap-2">
+                <div>{menu.icon}</div>
+                <p>{menu.name}</p>
+              </div>
             </NavLinkItem>
           ))}
         </div>
