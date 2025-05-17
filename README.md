@@ -40,15 +40,15 @@ npm run dev
 
 ## Screenshots
 
-1. [sc1](https://ibb.co/RkgZNkTt)
-2. [sc2](https://ibb.co/FkRf8Fsb)
-3. [sc3](https://ibb.co/pvmW24kc)
-4. [sc4](https://ibb.co/8g8FWfm0)
-5. [sc5](https://ibb.co/zVjCcVPW)
-6. [sc6](https://ibb.co/5hZX8vGC)
-7. [sc7](https://ibb.co/ZRrdVFx1)
-8. [sc8](https://ibb.co/Y4SyXMBy)
-9. [sc9](https://ibb.co/sd3Lx7Zj)
+1. [sc1](https://ibb.co.com/RkgZNkTt)
+2. [sc2](https://ibb.co.com/FkRf8Fsb)
+3. [sc3](https://ibb.co.com/pvmW24kc)
+4. [sc4](https://ibb.co.com/8g8FWfm0)
+5. [sc5](https://ibb.co.com/zVjCcVPW)
+6. [sc6](https://ibb.co.com/5hZX8vGC)
+7. [sc7](https://ibb.co.com/ZRrdVFx1)
+8. [sc8](https://ibb.co.com/Y4SyXMBy)
+9. [sc9](https://ibb.co.com/sd3Lx7Zj)
 
 ## Contributing
 
