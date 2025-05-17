@@ -3,7 +3,7 @@ import { TicketX } from "lucide-react";
 const NotFoundPage = () => {
   return (
     <>
-      <section className="flex flex-col justify-center items-center">
+      <section className="flex flex-col justify-center items-center min-h-[calc(100vh-124px)]">
         <TicketX className="w-32 h-32" />
         <h1 className="text-xl font-semibold text-center text-gray-700">
           Page Not Found
