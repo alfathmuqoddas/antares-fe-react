@@ -28,7 +28,7 @@ const CinemasPage = () => {
             <div
               key={theater.id}
               className="p-4 bg-white border rounded-md hover:cursor-pointer  hover:shadow"
-              onClick={() => navigate(`${theater.id}`)}
+              onClick={() => navigate(`${theater.slug}`)}
             >
               <h2 className="font-bold mb-2">{theater.name}</h2>
               <div className="flex gap-2 items-center">

@@ -71,7 +71,7 @@ createRoot(document.getElementById("root")!).render(
                 }
               />
               <Route
-                path="movies/:id"
+                path="movies/:slug"
                 element={
                   <Suspense fallback={<LoadingPage />}>
                     <MovieDetailsPage />
@@ -87,7 +87,7 @@ createRoot(document.getElementById("root")!).render(
                 }
               />
               <Route
-                path="cinema/:id"
+                path="cinema/:slug"
                 element={
                   <Suspense fallback={<LoadingPage />}>
                     <CinemasDetailsPage />

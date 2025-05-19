@@ -33,7 +33,7 @@ const MoviesPage = () => {
           {data?.map((movie: any) => (
             <div
               key={movie.id}
-              onClick={() => navigate(`/movies/${movie.id}`)}
+              onClick={() => navigate(`/movies/${movie.slug}`)}
               className="rounded-3xl overflow-hidden group hover:bg-red-500 hover:scale-105 transition-all duration-200 hover:cursor-pointer"
             >
               <img
