@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button";
 import dayjs from "dayjs";
 
 const CinemaDetailsPage = () => {
-  const { id } = useParams();
+  const { slug } = useParams();
   const { data, error, isLoading } = useSWR(
-    `${import.meta.env.VITE_API_BASE}/theaters/${id}/showtimes`,
+    `${import.meta.env.VITE_API_BASE}/theaters/${slug}/showtimes`,
     fetcher
   );
   if (error) {
