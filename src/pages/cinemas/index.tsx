@@ -7,7 +7,7 @@ const CinemasPage = () => {
   const navigate = useNavigate();
   const { data, error, isLoading } = useSWR(
     `${import.meta.env.VITE_API_BASE}/theaters`,
-    fetcher
+    fetcher,
   );
   if (error) {
     console.error("Error fetching theaters data:", error);
@@ -22,7 +22,7 @@ const CinemasPage = () => {
   return (
     <>
       <section aria-label="cinema-page">
-        <h1 className="text-xl font-bold mb-4">Theaters</h1>
+        <h1 className="text-xl font-bold mb-8">THEATERS AT ANTARES</h1>
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {data.map((theater: any) => (
             <div

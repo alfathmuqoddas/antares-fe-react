@@ -1,15 +1,20 @@
-import { useParams } from "react-router";
+import { useParams, useSearchParams } from "react-router";
 import { fetcher } from "@/lib/fetcher";
 import useSWR from "swr";
 import dayjs from "dayjs";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router";
+import { DateSelector } from "@/components/DateDropdown";
 
 const MovieDetailsPage = () => {
   const { slug } = useParams();
+  const [searchParams] = useSearchParams();
+
+  const dateQuery = searchParams.get("date") || dayjs().format("DD-MM-YYYY");
+
   const { data, error, isLoading } = useSWR(
-    `${import.meta.env.VITE_API_BASE}/movies/${slug}/showtimes`,
-    fetcher
+    `${import.meta.env.VITE_API_BASE}/movies/${slug}/showtimes?date=${dateQuery}`,
+    fetcher,
   );
 
   if (error) {
@@ -30,10 +35,11 @@ const MovieDetailsPage = () => {
   return (
     <>
       <section className="" aria-label="showtimes for movie">
-        <h1 className="font-bold mb-4">
+        <h1 className="font-bold mb-8">
           <span className="font-normal">Showtimes for movie</span> {title}
         </h1>
         {/* {data && <pre>Data: {JSON.stringify(data, null, 2)}</pre>} */}
+        <DateSelector />
         {theaters.length > 0 ? (
           <section className="flex flex-col gap-4">
             {theaters.map((theater: any) => (
@@ -43,7 +49,7 @@ const MovieDetailsPage = () => {
               >
                 <div className="p-4 bg-white">
                   <Link
-                    to={`/cinema/${theater.id}`}
+                    to={`/cinema/${theater.slug}`}
                     className="font-bold uppercase hover:underline hover:underline-offset-4"
                   >
                     {theater.name}
@@ -57,14 +63,18 @@ const MovieDetailsPage = () => {
                           <h3 className="font-bold mb-2">{screenType}</h3>
                           <div className="grid grid-cols-4 md:grid-cols-8 lg:grid-cols-12 gap-4">
                             {showtimes.map((showtime: any) => (
-                              <Button key={showtime.id} variant={"outline"}>
+                              <Button
+                                key={showtime.id}
+                                variant={"outline"}
+                                className="cursor-pointer"
+                              >
                                 {dayjs(showtime.startTime).format("H:mm")}
                               </Button>
                             ))}
                           </div>
                         </div>
                       );
-                    }
+                    },
                   )}
                 </div>
               </div>

@@ -23,9 +23,9 @@ const ManageShowtimes = ({
   screens: any;
 }) => {
   const [isLoadingDelete, setIsLoadingDelete] = useState(false);
-  const { data, error, isLoading } = useSWR(
+  const { data, error, isLoading, mutate } = useSWR(
     `${import.meta.env.VITE_API_BASE}/showtimes/theater/${theaterId}`,
-    fetcher
+    fetcher,
   );
   if (error) {
     console.error("Error fetching theaters data:", error);
@@ -47,11 +47,12 @@ const ManageShowtimes = ({
           headers: {
             "Content-Type": "application/json",
           },
-        }
+        },
       );
       const data = await res.json();
       alert(data.message);
       setIsLoadingDelete(false);
+      mutate();
     } catch (error) {
       alert("Error deleting showtime");
       setIsLoadingDelete(false);

@@ -1,15 +1,18 @@
 import useSWR from "swr";
 import { fetcher } from "@/lib/fetcher";
-import { useParams } from "react-router";
+import { useParams, useSearchParams } from "react-router";
 import TheaterMovieCard from "@/components/ui/theaterMovieCard";
 import { Button } from "@/components/ui/button";
 import dayjs from "dayjs";
+import { DateSelector } from "@/components/DateDropdown";
 
 const CinemaDetailsPage = () => {
   const { slug } = useParams();
+  const [searchParams] = useSearchParams();
+  const dateQuery = searchParams.get("date") || dayjs().format("DD-MM-YYYY");
   const { data, error, isLoading } = useSWR(
-    `${import.meta.env.VITE_API_BASE}/theaters/${slug}/showtimes`,
-    fetcher
+    `${import.meta.env.VITE_API_BASE}/theaters/${slug}/showtimes?date=${dateQuery}`,
+    fetcher,
   );
   if (error) {
     console.error("Error fetching theaters data:", error);
@@ -27,8 +30,11 @@ const CinemaDetailsPage = () => {
     <>
       <section aria-label="cinema-details-page">
         <div>
-          <h1 className="text-xl font-bold mb-4">Showtimes for {data.name}</h1>
+          <h1 className="mb-8">
+            Showtimes for <span className="font-bold">{data.name}</span>
+          </h1>
         </div>
+        <DateSelector />
         <section className="flex flex-col gap-4">
           {data.movies.length > 0 ? (
             data.movies?.map((movie: any) => (
@@ -44,13 +50,17 @@ const CinemaDetailsPage = () => {
                         <h2 className="font-bold mb-1">{screenType}</h2>
                         <div className="grid grid-cols-4 md:grid-cols-8 lg:grid-cols-12 gap-4">
                           {showtimes.map((showtime: any) => (
-                            <Button key={showtime.id} variant={"outline"}>
+                            <Button
+                              key={showtime.id}
+                              variant={"outline"}
+                              className="cursor-pointer"
+                            >
                               {dayjs(showtime.startTime).format("H:mm")}
                             </Button>
                           ))}
                         </div>
                       </div>
-                    )
+                    ),
                   )}
                 </div>
               </div>

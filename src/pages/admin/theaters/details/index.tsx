@@ -19,7 +19,7 @@ const AdminTheatersDetailsPage = () => {
   const { id } = useParams();
   const { data, error, isLoading } = useSWR(
     `${import.meta.env.VITE_API_BASE}/theaters/${id}`,
-    fetcher
+    fetcher,
   );
   if (error) {
     console.error("Error fetching theaters data:", error);
@@ -36,7 +36,7 @@ const AdminTheatersDetailsPage = () => {
     <>
       <section className="" aria-label="admin-theaters-details-page">
         <h1 className="text-xl font-bold mb-4">Theater Details</h1>
-        <section className="rounded-lg bg-gray-100 p-4 mb-8">
+        <section className="rounded-lg shadow bg-white p-6 mb-8">
           <div className="table">
             <div className="table-row">
               <div className="table-cell pr-16">Name</div>

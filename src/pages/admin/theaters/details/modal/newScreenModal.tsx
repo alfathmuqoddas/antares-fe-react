@@ -22,6 +22,7 @@ const NewScreenModal = ({ theaterId }: { theaterId: string }) => {
     layoutDescription: "",
   });
   const [loadingSubmit, setLoadingSubmit] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -40,6 +41,7 @@ const NewScreenModal = ({ theaterId }: { theaterId: string }) => {
       const data = await res.json();
       setLoadingSubmit(false);
       alert(data.message);
+      setOpen(false);
     } catch (error) {
       console.error("Error fetching movie data:", error);
       setLoadingSubmit(false);
@@ -48,7 +50,7 @@ const NewScreenModal = ({ theaterId }: { theaterId: string }) => {
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="default">
           <Plus /> New Screen

@@ -10,6 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { PencilLine } from "lucide-react";
 import { useState } from "react";
 
 const UpdateTheaterModal = ({ theater }: { theater: any }) => {
@@ -31,7 +32,7 @@ const UpdateTheaterModal = ({ theater }: { theater: any }) => {
           body: JSON.stringify({
             ...theaterData,
           }),
-        }
+        },
       );
       const data = await res.json();
       setIsLoadingUpdate(false);
@@ -45,8 +46,8 @@ const UpdateTheaterModal = ({ theater }: { theater: any }) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <span className="underline underline-offset-2 font-semibold text-orange-400 hover:cursor-pointer">
-          edit
+        <span className="underline underline-offset-2 font-semibold text-orange-500 hover:cursor-pointer">
+          <PencilLine size={16} />
         </span>
       </DialogTrigger>
       <DialogContent className="">

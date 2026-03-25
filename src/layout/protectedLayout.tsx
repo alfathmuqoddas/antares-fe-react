@@ -17,7 +17,7 @@ const ProtectedRoute = ({ allowedRoles }: { allowedRoles: string[] }) => {
 
   return (
     <>
-      <section className="container mx-auto px-4 py-8">
+      <section className="container mx-auto px-8 py-8">
         <Outlet />
       </section>
     </>

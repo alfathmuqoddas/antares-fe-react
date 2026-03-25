@@ -17,6 +17,7 @@ import { fetcher } from "@/lib/fetcher";
 
 const NewMovieModal = () => {
   const [query, setQuery] = useState("");
+  const [open, setOpen] = useState(false);
   const [loadingSubmit, setLoadingSubmit] = useState(false);
   const [debouncedQuery, setDebouncedQuery] = useState("");
   //useEffect to debounce the query
@@ -29,7 +30,7 @@ const NewMovieModal = () => {
 
   const { data, error, isLoading } = useSWR(
     `https://www.omdbapi.com/?i=${debouncedQuery}&apiKey=af1284eb`,
-    fetcher
+    fetcher,
   );
 
   //submit the imdbId
@@ -47,11 +48,12 @@ const NewMovieModal = () => {
           body: JSON.stringify({
             imdbId: debouncedQuery,
           }),
-        }
+        },
       );
       const data = await res.json();
       setLoadingSubmit(false);
       alert(data.message);
+      setOpen(false);
     } catch (error) {
       console.error("Error fetching movie data:", error);
       setLoadingSubmit(false);
@@ -60,7 +62,7 @@ const NewMovieModal = () => {
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="default">
           <Plus /> New Movie

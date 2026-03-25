@@ -10,12 +10,15 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { PencilLine } from "lucide-react";
 import { useState } from "react";
 
 const UpdateScreenModal = ({ screen }: { screen: any }) => {
   const [screenData, setScreenData] = useState(screen);
 
   const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
+
+  const [open, setOpen] = useState(false);
 
   const handleUpdate = async (e: any) => {
     e.preventDefault();
@@ -31,11 +34,12 @@ const UpdateScreenModal = ({ screen }: { screen: any }) => {
           body: JSON.stringify({
             ...screenData,
           }),
-        }
+        },
       );
       const data = await res.json();
       setIsLoadingUpdate(false);
       alert(data.message);
+      setOpen(false);
     } catch (error) {
       console.error("Error updating movie:", error);
       setIsLoadingUpdate(false);
@@ -43,10 +47,10 @@ const UpdateScreenModal = ({ screen }: { screen: any }) => {
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <span className="underline underline-offset-2 font-semibold text-orange-400 hover:cursor-pointer">
-          edit
+        <span className="underline underline-offset-2 font-semibold text-orange-500 hover:cursor-pointer">
+          <PencilLine size={16} />
         </span>
       </DialogTrigger>
       <DialogContent className="">

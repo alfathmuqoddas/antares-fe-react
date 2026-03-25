@@ -18,7 +18,7 @@ const AdminTheatersPage = () => {
   const navigate = useNavigate();
   const { data, error, isLoading } = useSWR(
     `${import.meta.env.VITE_API_BASE}/theaters`,
-    fetcher
+    fetcher,
   );
   if (error) {
     console.error("Error fetching theaters data:", error);
@@ -32,7 +32,7 @@ const AdminTheatersPage = () => {
   }
   return (
     <>
-      <header className="flex justify-between items-center mb-4">
+      <header className="flex justify-between items-center mb-8">
         <h1 className="text-xl font-bold">Manage Theaters</h1>
         <div>
           <NewTheaterModal />
@@ -59,7 +59,7 @@ const AdminTheatersPage = () => {
                 <TableCell>
                   <span
                     onClick={() => navigate(`${theater.id}`)}
-                    className="hover:underline hover:underline-offset-2 font-semibold hover:cursor-pointer"
+                    className="underline text-blue-500 underline-offset-2 hover:cursor-pointer"
                   >
                     {theater.name}
                   </span>

@@ -20,9 +20,13 @@ import { Plus } from "lucide-react";
 import { useState } from "react";
 import useSWR from "swr";
 import { fetcher } from "@/lib/fetcher";
+import dayjs from "dayjs";
+import timezone from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
 
 const NewShowtimesModal = ({ screens }: { screens: any }) => {
   const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
+  const [open, setOpen] = useState(false);
   const [showtimeForm, setShowtimeForm] = useState({
     movieId: "",
     startTime: "",
@@ -35,11 +39,14 @@ const NewShowtimesModal = ({ screens }: { screens: any }) => {
     isLoading: moviesLoading,
   } = useSWR(`${import.meta.env.VITE_API_BASE}/movies/now-playing`, fetcher);
 
+  dayjs.extend(utc);
+  dayjs.extend(timezone);
+
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     setIsLoadingSubmit(true);
     try {
-      console.log({ showtimeForm });
+      const localTime = dayjs.tz(showtimeForm.startTime, "Asia/Jakarta");
       const res = await fetch(`${import.meta.env.VITE_API_BASE}/showtimes`, {
         method: "POST",
         headers: {
@@ -47,11 +54,13 @@ const NewShowtimesModal = ({ screens }: { screens: any }) => {
         },
         body: JSON.stringify({
           ...showtimeForm,
+          startTime: localTime.toISOString(),
         }),
       });
       const data = await res.json();
       setIsLoadingSubmit(false);
       alert(data.message);
+      setOpen(false);
     } catch (error) {
       console.error("Error fetching movie data:", error);
       setIsLoadingSubmit(false);
@@ -59,7 +68,7 @@ const NewShowtimesModal = ({ screens }: { screens: any }) => {
     }
   };
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="default">
           <Plus /> New Showtimes

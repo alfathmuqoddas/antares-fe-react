@@ -1,13 +1,14 @@
 import useSWR from "swr";
 import { fetcher } from "@/lib/fetcher";
 import { useNavigate } from "react-router";
+import { Clock, UserRoundCheck } from "lucide-react";
 
 const MoviesPage = () => {
   const navigate = useNavigate();
   console.log(import.meta.env.VITE_API_BASE);
   const { data, error, isLoading } = useSWR(
     `${import.meta.env.VITE_API_BASE}/movies/now-playing`,
-    fetcher
+    fetcher,
   );
 
   if (error) {
@@ -26,28 +27,42 @@ const MoviesPage = () => {
   return (
     <>
       <section className="" aria-label="movies-page">
-        <h1 className="text-xl font-bold mb-4">Movies at Antares</h1>
+        <h1 className="text-xl font-bold mb-8">MOVIES AT ANTARES</h1>
         {/* {data && <pre>Data: {JSON.stringify(data, null, 2)}</pre>} */}
         {/* grid of movies card with 4 columns down to 2 columns on mobile */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 lg:gap-8">
           {data?.map((movie: any) => (
             <div
               key={movie.id}
               onClick={() => navigate(`/movies/${movie.slug}`)}
-              className="rounded-3xl overflow-hidden group hover:bg-red-500 hover:scale-105 transition-all duration-200 hover:cursor-pointer"
+              className="rounded-3xl overflow-hidden group hover:scale-105 transition-all duration-200 hover:cursor-pointer"
             >
               <img
                 src={movie.poster}
+                className="w-full rounded-b-3xl"
                 alt={`poster for ${movie.title}`}
                 width={300}
                 height={445}
               />
-              <div className="flex flex-col p-2 text-center group-hover:text-white">
+              <div className="flex flex-col gap-1 p-2 text-center">
                 <h2 className="font-semibold text-xl uppercase">
                   {movie.title}
                 </h2>
                 <div className="flex justify-center gap-2 text-sm">
-                  <p>{movie.runtime}</p>|<p>{movie.rated}</p>
+                  <div className="flex gap-2 items-center">
+                    <div className="flex gap-1 items-center">
+                      <div>
+                        <Clock size={14} />
+                      </div>
+                      <div>{movie.runtime}</div>
+                    </div>
+                    <div className="flex gap-1 items-center">
+                      <div>
+                        <UserRoundCheck size={14} />
+                      </div>
+                      <div>{movie.rated}</div>
+                    </div>
+                  </div>
                 </div>
                 <p className="text-sm">Released {movie.released}</p>
               </div>

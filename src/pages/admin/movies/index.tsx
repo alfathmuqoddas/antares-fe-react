@@ -15,7 +15,7 @@ import { Badge } from "@/components/ui/badge";
 const AdminMoviesPage = () => {
   const { data, error, isLoading } = useSWR(
     `${import.meta.env.VITE_API_BASE}/movies`,
-    fetcher
+    fetcher,
   );
   if (error) {
     console.error("Error fetching movie data:", error);
@@ -30,7 +30,7 @@ const AdminMoviesPage = () => {
 
   return (
     <>
-      <header className="flex justify-between items-center mb-4">
+      <header className="flex justify-between items-center mb-8">
         <h1 className="text-xl font-bold">Manage Movies</h1>
         <div>
           <NewMovieModal />
@@ -52,25 +52,33 @@ const AdminMoviesPage = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data?.map((movie: any) => (
-              <TableRow key={movie.id}>
-                <TableCell>
-                  <span className="font-semibold">{movie.title}</span>
-                </TableCell>
-                <TableCell>{movie.released}</TableCell>
-                <TableCell>{movie.runtime}</TableCell>
-                <TableCell>
-                  {movie.nowPlaying ? (
-                    <Badge>Yes</Badge>
-                  ) : (
-                    <Badge variant={"destructive"}>No</Badge>
-                  )}
-                </TableCell>
-                <TableCell>
-                  <UpdateMovieModal movie={movie} />
+            {data?.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={5}>
+                  <p className="text-center">No movies found.</p>
                 </TableCell>
               </TableRow>
-            ))}
+            ) : (
+              data?.map((movie: any) => (
+                <TableRow key={movie.id}>
+                  <TableCell>
+                    <span className="font-semibold">{movie.title}</span>
+                  </TableCell>
+                  <TableCell>{movie.released}</TableCell>
+                  <TableCell>{movie.runtime}</TableCell>
+                  <TableCell>
+                    {movie.nowPlaying ? (
+                      <Badge>Yes</Badge>
+                    ) : (
+                      <Badge variant={"destructive"}>No</Badge>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <UpdateMovieModal movie={movie} />
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </section>
