@@ -1,4 +1,4 @@
-import { useParams, useSearchParams } from "react-router";
+import { useParams, useSearchParams, useNavigate } from "react-router";
 import { fetcher } from "@/lib/fetcher";
 import useSWR from "swr";
 import dayjs from "dayjs";
@@ -9,6 +9,7 @@ import { DateSelector } from "@/components/DateDropdown";
 const MovieDetailsPage = () => {
   const { slug } = useParams();
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   const dateQuery = searchParams.get("date") || dayjs().format("DD-MM-YYYY");
 
@@ -67,6 +68,19 @@ const MovieDetailsPage = () => {
                                 key={showtime.id}
                                 variant={"outline"}
                                 className="cursor-pointer"
+                                onClick={() => {
+                                  navigate(`/showtimes/${showtime.id}`, {
+                                    state: {
+                                      movie: {
+                                        title: data.title,
+                                        poster: data.poster,
+                                        duration: data.duration,
+                                        genre: data.genre,
+                                        rated: data.rated,
+                                      },
+                                    },
+                                  });
+                                }}
                               >
                                 {dayjs(showtime.startTime).format("H:mm")}
                               </Button>

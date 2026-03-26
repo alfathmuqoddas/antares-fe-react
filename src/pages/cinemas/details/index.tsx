@@ -1,6 +1,6 @@
 import useSWR from "swr";
 import { fetcher } from "@/lib/fetcher";
-import { useParams, useSearchParams } from "react-router";
+import { useParams, useSearchParams, useNavigate } from "react-router";
 import TheaterMovieCard from "@/components/ui/theaterMovieCard";
 import { Button } from "@/components/ui/button";
 import dayjs from "dayjs";
@@ -9,6 +9,7 @@ import { DateSelector } from "@/components/DateDropdown";
 const CinemaDetailsPage = () => {
   const { slug } = useParams();
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const dateQuery = searchParams.get("date") || dayjs().format("DD-MM-YYYY");
   const { data, error, isLoading } = useSWR(
     `${import.meta.env.VITE_API_BASE}/theaters/${slug}/showtimes?date=${dateQuery}`,
@@ -54,6 +55,19 @@ const CinemaDetailsPage = () => {
                               key={showtime.id}
                               variant={"outline"}
                               className="cursor-pointer"
+                              onClick={() => {
+                                navigate(`/showtimes/${showtime.id}`, {
+                                  state: {
+                                    movie: {
+                                      title: movie.title,
+                                      poster: movie.poster,
+                                      duration: movie.duration,
+                                      genre: movie.genre,
+                                      rated: movie.rated,
+                                    },
+                                  },
+                                });
+                              }}
                             >
                               {dayjs(showtime.startTime).format("H:mm")}
                             </Button>

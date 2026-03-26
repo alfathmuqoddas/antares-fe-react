@@ -14,19 +14,20 @@ const UnauthorizedPage = lazy(() => import("./pages/unauthorized/index.tsx"));
 const NotFoundPage = lazy(() => import("./pages/notFound/index.tsx"));
 const MoviesPage = lazy(() => import("./pages/movies/index.tsx"));
 const MovieDetailsPage = lazy(() => import("./pages/movies/details/index.tsx"));
+const ShowtimesPage = lazy(() => import("./pages/showtimes/index.tsx"));
 const CinemasPage = lazy(() => import("./pages/cinemas/index.tsx"));
 const CinemasDetailsPage = lazy(
-  () => import("./pages/cinemas/details/index.tsx")
+  () => import("./pages/cinemas/details/index.tsx"),
 );
 const AdminMoviesPage = lazy(() => import("./pages/admin/movies/index.tsx"));
 const AdminShowtimesPage = lazy(
-  () => import("./pages/admin/showtimes/index.tsx")
+  () => import("./pages/admin/showtimes/index.tsx"),
 );
 const AdminTheatersPage = lazy(
-  () => import("./pages/admin/theaters/index.tsx")
+  () => import("./pages/admin/theaters/index.tsx"),
 );
 const AdminTheatersDetailsPage = lazy(
-  () => import("./pages/admin/theaters/details/index.tsx")
+  () => import("./pages/admin/theaters/details/index.tsx"),
 );
 import ProtectedRoute from "./layout/protectedLayout.tsx";
 import MainLayout from "./layout/mainLayout.tsx";
@@ -94,6 +95,14 @@ createRoot(document.getElementById("root")!).render(
                   </Suspense>
                 }
               />
+              <Route
+                path="showtimes/:id"
+                element={
+                  <Suspense fallback={<LoadingPage />}>
+                    <ShowtimesPage />
+                  </Suspense>
+                }
+              />
             </Route>
             <Route
               path="admin"
@@ -155,5 +164,5 @@ createRoot(document.getElementById("root")!).render(
         </Routes>
       </BrowserRouter>
     </SWRConfig>
-  </StrictMode>
+  </StrictMode>,
 );
