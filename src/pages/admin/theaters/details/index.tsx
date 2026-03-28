@@ -14,6 +14,7 @@ import { fetcher } from "@/lib/fetcher";
 import NewScreenModal from "./modal/newScreenModal";
 import UpdateScreenModal from "./modal/updateScreenModal";
 import ManageShowtimes from "./showtimes";
+import NewSeatLayoutModal from "./modal/newSeatLayoutModal";
 
 const AdminTheatersDetailsPage = () => {
   const { id } = useParams();
@@ -87,6 +88,9 @@ const AdminTheatersDetailsPage = () => {
                       <TableCell>{screen.screenType}</TableCell>
                       <TableCell>{screen.capacity}</TableCell>
                       <TableCell>{screen.layoutDescription}</TableCell>
+                      <TableCell>
+                        <NewSeatLayoutModal screenId={screen.id} />
+                      </TableCell>
                       <TableCell>
                         <UpdateScreenModal screen={screen} />
                       </TableCell>
