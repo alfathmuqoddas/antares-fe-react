@@ -6,7 +6,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Menu } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Link } from "react-router";
 
 const MobileMenu = ({
@@ -18,9 +17,7 @@ const MobileMenu = ({
     <>
       <DropdownMenu>
         <DropdownMenuTrigger>
-          <Button variant="ghost">
-            <Menu size={24} />
-          </Button>
+          <Menu size={24} />
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           {navMenus.map((navMenu) => (

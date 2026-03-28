@@ -11,27 +11,34 @@ import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
 import { Armchair } from "lucide-react";
 
+type Seat = {
+  gridRow: number;
+  gridCol: number;
+  rowLabel: string;
+  seatNumber: number | null;
+  status: string;
+  type?: "seat" | "aisle";
+};
+
 const NewSeatLayoutModal = ({ screenId }: { screenId: string }) => {
   const [initialRowCol, setInitialRowCol] = useState<{
     row: number;
     col: number;
   }>({ row: 0, col: 0 });
-  const [seats, setSeats] = useState<Array<{
-    row: string;
-    col: number;
-    status: string;
-  }> | null>(null);
+  const [seats, setSeats] = useState<Seat[] | null>(null);
 
   const [open, setOpen] = useState(false);
 
   const handleSetSeatBasedOnInitialRowCol = () => {
     const { row, col } = initialRowCol;
     const newSeats = [];
-    for (let i = 1; i <= row; i++) {
-      for (let j = 1; j <= col; j++) {
+    for (let y = 0; y < row; y++) {
+      for (let x = 0; x < col; x++) {
         newSeats.push({
-          row: String.fromCharCode(64 + i),
-          col: j,
+          gridRow: y,
+          gridCol: x,
+          rowLabel: String.fromCharCode(65 + y),
+          seatNumber: null,
           status: "available",
         });
       }
@@ -39,18 +46,56 @@ const NewSeatLayoutModal = ({ screenId }: { screenId: string }) => {
     setSeats(newSeats);
   };
 
-  const toggleAisle = (row: string, col: number) => {
-    const newSeats = [...(seats || [])];
-    const seat = newSeats.find((seat) => seat.row === row && seat.col === col);
-    if (seat) {
-      seat.status = seat.status === "available" ? "unavailable" : "available";
-      setSeats(newSeats);
-    }
+  const toggleAisle = (row: number, col: number) => {
+    setSeats((prevSeats) => {
+      if (!prevSeats) return null;
+      return prevSeats.map((seat) => {
+        if (seat.gridRow === row && seat.gridCol === col) {
+          return {
+            ...seat,
+            status: seat.status === "available" ? "unavailable" : "available",
+          };
+        }
+        return seat;
+      });
+    });
   };
 
   useEffect(() => {
     setSeats(null);
   }, [open]);
+
+  const getFinalPayload = (currentSeats: Seat[] | null) => {
+    if (!currentSeats || currentSeats.length === 0) {
+      return [];
+    }
+
+    const sortedSeats = [...currentSeats].sort((a, b) => {
+      if (a.gridRow === b.gridRow) {
+        return a.gridCol - b.gridCol;
+      }
+      return a.gridRow - b.gridRow;
+    });
+
+    let currentRow = -1;
+    let humanCounter = 0;
+
+    const finalized = sortedSeats.map((seat) => {
+      if (seat.gridRow !== currentRow) {
+        currentRow = seat.gridRow;
+        humanCounter = 0;
+      }
+
+      if (seat.status === "available") {
+        humanCounter++;
+        return { ...seat, seatNumber: humanCounter, type: "seat" };
+      }
+
+      return { ...seat, seatNumber: null, rowLabel: null, type: "aisle" };
+    });
+
+    return console.log(JSON.stringify(finalized, null, 2));
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -70,10 +115,10 @@ const NewSeatLayoutModal = ({ screenId }: { screenId: string }) => {
               min={0}
               max={26}
               onChange={(e) =>
-                setInitialRowCol({
+                setInitialRowCol((prev) => ({
+                  ...prev,
                   row: Number(e.target.value),
-                  col: initialRowCol.col,
-                })
+                }))
               }
             />
             <Input
@@ -82,19 +127,18 @@ const NewSeatLayoutModal = ({ screenId }: { screenId: string }) => {
               type="number"
               min={0}
               onChange={(e) =>
-                setInitialRowCol({
-                  row: initialRowCol.row,
+                setInitialRowCol((prev) => ({
+                  ...prev,
                   col: Number(e.target.value),
-                })
+                }))
               }
             />
           </div>
           <Button onClick={handleSetSeatBasedOnInitialRowCol}>
             Generate Initial Seats
           </Button>
-          <Button onClick={() => alert(JSON.stringify(seats))}>
-            Print JSON
-          </Button>
+          <Button onClick={() => getFinalPayload(seats)}>Print JSON</Button>
+
           <div className="flex-1 overflow-y-auto mt-6">
             <div
               className="grid gap-2"
@@ -102,43 +146,40 @@ const NewSeatLayoutModal = ({ screenId }: { screenId: string }) => {
                 gridTemplateColumns: `repeat(${initialRowCol.col}, min-content)`,
               }}
             >
-              {Array.from({ length: initialRowCol.row }).map((_, rowIndex) => {
-                const rowLetter = String.fromCharCode(65 + rowIndex);
-                let displayColCounter = 0;
+              {seats?.map((seat) => {
+                const seatsInThisRow = seats.filter(
+                  (s) => s.gridRow === seat.gridRow,
+                );
+                const seatIndexInRow = seatsInThisRow.indexOf(seat);
+                const earlierAvailableSeats = seatsInThisRow
+                  .slice(0, seatIndexInRow + 1)
+                  .filter((s) => s.status === "available").length;
 
-                return seats
-                  ?.filter((s) => s.row === rowLetter)
-                  .map((seat) => {
-                    if (seat.status === "available") {
-                      displayColCounter++;
-                    }
-
-                    return (
-                      <div key={`${seat.row}-${seat.col}`}>
-                        <Button
-                          variant={
-                            seat.status === "available" ? "outline" : "ghost"
-                          }
-                          className={`w-12 h-10 ${seat.status === "unavailable" ? "opacity-20 border-dashed" : ""}`}
-                          onClick={() => toggleAisle(seat.row, seat.col)}
-                        >
-                          {seat.status === "available" ? (
-                            <div className="flex flex-col items-center text-[10px]">
-                              <Armchair size={12} />
-                              <span>
-                                {seat.row}
-                                {displayColCounter}
-                              </span>
-                            </div>
-                          ) : (
-                            <span className="text-[10px] text-muted-foreground">
-                              Aisle
-                            </span>
-                          )}
-                        </Button>
-                      </div>
-                    );
-                  });
+                return (
+                  <div key={`${seat.gridRow}-${seat.gridCol}`}>
+                    <Button
+                      variant={
+                        seat.status === "available" ? "outline" : "ghost"
+                      }
+                      className={`w-12 h-10 ${seat.status === "unavailable" ? "opacity-20 border-dashed" : ""}`}
+                      onClick={() => toggleAisle(seat.gridRow, seat.gridCol)}
+                    >
+                      {seat.status === "available" ? (
+                        <div className="flex flex-col items-center text-[10px]">
+                          <Armchair size={12} />
+                          <span>
+                            {seat.rowLabel}
+                            {earlierAvailableSeats}
+                          </span>
+                        </div>
+                      ) : (
+                        <span className="text-[10px] text-muted-foreground">
+                          Aisle
+                        </span>
+                      )}
+                    </Button>
+                  </div>
+                );
               })}
             </div>
           </div>
