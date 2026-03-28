@@ -26,6 +26,7 @@ const NewSeatLayoutModal = ({ screenId }: { screenId: string }) => {
     col: number;
   }>({ row: 0, col: 0 });
   const [seats, setSeats] = useState<Seat[] | null>(null);
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
 
   const [open, setOpen] = useState(false);
 
@@ -94,7 +95,32 @@ const NewSeatLayoutModal = ({ screenId }: { screenId: string }) => {
       return { ...seat, seatNumber: null, rowLabel: null, type: "aisle" };
     });
 
-    return console.log(JSON.stringify(finalized, null, 2));
+    return finalized;
+  };
+
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    setLoadingSubmit(true);
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE}/seats/bulk`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          seats: getFinalPayload(seats),
+          screenId,
+        }),
+      });
+      const data = await res.json();
+      setLoadingSubmit(false);
+      alert(data.message);
+      setOpen(false);
+    } catch (error) {
+      console.error("Error fetching movie data:", error);
+      setLoadingSubmit(false);
+      alert("Error submitting movie");
+    }
   };
 
   return (
@@ -102,7 +128,7 @@ const NewSeatLayoutModal = ({ screenId }: { screenId: string }) => {
       <DialogTrigger asChild>
         <span>New Layout</span>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[90vw] max-h-[90vh] flex flex-col gap-4">
+      <DialogContent className="sm:max-w-[95vw] w-full h-[90vh] flex flex-col p-6">
         <DialogHeader>
           <DialogTitle>Add New Seat Layout</DialogTitle>
         </DialogHeader>
@@ -112,7 +138,7 @@ const NewSeatLayoutModal = ({ screenId }: { screenId: string }) => {
               id="seatRow"
               placeholder="Set Row"
               type="number"
-              min={0}
+              min={1}
               max={26}
               onChange={(e) =>
                 setInitialRowCol((prev) => ({
@@ -125,7 +151,8 @@ const NewSeatLayoutModal = ({ screenId }: { screenId: string }) => {
               id="seatCol"
               placeholder="Set Col"
               type="number"
-              min={0}
+              min={1}
+              max={40}
               onChange={(e) =>
                 setInitialRowCol((prev) => ({
                   ...prev,
@@ -134,53 +161,78 @@ const NewSeatLayoutModal = ({ screenId }: { screenId: string }) => {
               }
             />
           </div>
-          <Button onClick={handleSetSeatBasedOnInitialRowCol}>
+          <Button
+            onClick={handleSetSeatBasedOnInitialRowCol}
+            className="mr-4"
+            disabled={
+              initialRowCol.row === 0 ||
+              initialRowCol.col === 0 ||
+              initialRowCol.row > 26 ||
+              initialRowCol.col > 40
+            }
+          >
             Generate Initial Seats
           </Button>
-          <Button onClick={() => getFinalPayload(seats)}>Print JSON</Button>
+          <Button
+            onClick={handleSubmit}
+            disabled={
+              loadingSubmit ||
+              initialRowCol.row === 0 ||
+              initialRowCol.col === 0 ||
+              initialRowCol.row > 26 ||
+              initialRowCol.col > 40
+            }
+          >
+            {loadingSubmit ? "Processing..." : "Submit"}
+          </Button>
 
-          <div className="flex-1 overflow-y-auto mt-6">
-            <div
-              className="grid gap-2"
-              style={{
-                gridTemplateColumns: `repeat(${initialRowCol.col}, min-content)`,
-              }}
-            >
-              {seats?.map((seat) => {
-                const seatsInThisRow = seats.filter(
-                  (s) => s.gridRow === seat.gridRow,
-                );
-                const seatIndexInRow = seatsInThisRow.indexOf(seat);
-                const earlierAvailableSeats = seatsInThisRow
-                  .slice(0, seatIndexInRow + 1)
-                  .filter((s) => s.status === "available").length;
+          <div className="flex-1 overflow-auto p-8 relative">
+            <div className="flex flex-col items-center min-w-max h-[60vh]">
+              <div className="w-1/2 h-2 bg-slate-300 rounded-full mb-12 shadow-[0_10px_20px_rgba(0,0,0,0.1)] text-center text-[10px] text-slate-500 uppercase tracking-widest">
+                Screen
+              </div>
+              <div
+                className="grid gap-1.5"
+                style={{
+                  gridTemplateColumns: `repeat(${initialRowCol.col}, min-content)`,
+                }}
+              >
+                {seats?.map((seat) => {
+                  const seatsInThisRow = seats.filter(
+                    (s) => s.gridRow === seat.gridRow,
+                  );
+                  const seatIndexInRow = seatsInThisRow.indexOf(seat);
+                  const earlierAvailableSeats = seatsInThisRow
+                    .slice(0, seatIndexInRow + 1)
+                    .filter((s) => s.status === "available").length;
 
-                return (
-                  <div key={`${seat.gridRow}-${seat.gridCol}`}>
-                    <Button
-                      variant={
-                        seat.status === "available" ? "outline" : "ghost"
-                      }
-                      className={`w-12 h-10 ${seat.status === "unavailable" ? "opacity-20 border-dashed" : ""}`}
-                      onClick={() => toggleAisle(seat.gridRow, seat.gridCol)}
-                    >
-                      {seat.status === "available" ? (
-                        <div className="flex flex-col items-center text-[10px]">
-                          <Armchair size={12} />
-                          <span>
-                            {seat.rowLabel}
-                            {earlierAvailableSeats}
+                  return (
+                    <div key={`${seat.gridRow}-${seat.gridCol}`}>
+                      <Button
+                        variant={
+                          seat.status === "available" ? "outline" : "ghost"
+                        }
+                        className={`w-12 h-10 ${seat.status === "unavailable" ? "opacity-20 border-dashed" : ""}`}
+                        onClick={() => toggleAisle(seat.gridRow, seat.gridCol)}
+                      >
+                        {seat.status === "available" ? (
+                          <div className="flex flex-col items-center text-[10px]">
+                            <Armchair size={12} />
+                            <span>
+                              {seat.rowLabel}
+                              {earlierAvailableSeats}
+                            </span>
+                          </div>
+                        ) : (
+                          <span className="text-[10px] text-muted-foreground">
+                            Aisle
                           </span>
-                        </div>
-                      ) : (
-                        <span className="text-[10px] text-muted-foreground">
-                          Aisle
-                        </span>
-                      )}
-                    </Button>
-                  </div>
-                );
-              })}
+                        )}
+                      </Button>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>

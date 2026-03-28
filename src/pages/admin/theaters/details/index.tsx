@@ -15,10 +15,14 @@ import NewScreenModal from "./modal/newScreenModal";
 import UpdateScreenModal from "./modal/updateScreenModal";
 import ManageShowtimes from "./showtimes";
 import NewSeatLayoutModal from "./modal/newSeatLayoutModal";
+import ViewSeatLayoutModal from "./modal/viewSeatLayoutModal";
+import { Trash2 } from "lucide-react";
+import { useState } from "react";
 
 const AdminTheatersDetailsPage = () => {
   const { id } = useParams();
-  const { data, error, isLoading } = useSWR(
+  const [isLoadingDelete, setIsLoadingDelete] = useState(false);
+  const { data, error, isLoading, mutate } = useSWR(
     `${import.meta.env.VITE_API_BASE}/theaters/${id}`,
     fetcher,
   );
@@ -33,6 +37,32 @@ const AdminTheatersDetailsPage = () => {
     return <p>No data found.</p>;
   }
   const { screens } = data;
+
+  const handleDeleteScreen = async (id: string) => {
+    setIsLoadingDelete(true);
+    if (!window.confirm("Are you sure you want to delete this screen?")) {
+      setIsLoadingDelete(false);
+      return;
+    }
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_BASE}/screens/${id}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
+      const data = await res.json();
+      alert(data.message);
+      setIsLoadingDelete(false);
+      mutate();
+    } catch (error) {
+      alert("Error deleting screen");
+      setIsLoadingDelete(false);
+    }
+  };
   return (
     <>
       <section className="" aria-label="admin-theaters-details-page">
@@ -87,12 +117,24 @@ const AdminTheatersDetailsPage = () => {
                       <TableCell>{screen.name}</TableCell>
                       <TableCell>{screen.screenType}</TableCell>
                       <TableCell>{screen.capacity}</TableCell>
-                      <TableCell>{screen.layoutDescription}</TableCell>
                       <TableCell>
-                        <NewSeatLayoutModal screenId={screen.id} />
+                        {screen.hasSeats ? (
+                          <ViewSeatLayoutModal screenId={screen.id} />
+                        ) : (
+                          <NewSeatLayoutModal screenId={screen.id} />
+                        )}
                       </TableCell>
                       <TableCell>
-                        <UpdateScreenModal screen={screen} />
+                        <div className="flex gap-2">
+                          <UpdateScreenModal screen={screen} />
+
+                          <Trash2
+                            color="red"
+                            size={16}
+                            className="cursor-pointer"
+                            onClick={() => handleDeleteScreen(screen.id)}
+                          />
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
