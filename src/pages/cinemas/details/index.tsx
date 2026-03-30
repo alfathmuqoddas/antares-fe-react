@@ -65,6 +65,7 @@ const CinemaDetailsPage = () => {
                                       genre: movie.genre,
                                       rated: movie.rated,
                                     },
+                                    screenId: showtime.screen.id,
                                   },
                                 });
                               }}

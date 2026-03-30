@@ -78,6 +78,7 @@ const MovieDetailsPage = () => {
                                         genre: data.genre,
                                         rated: data.rated,
                                       },
+                                      screenId: showtime.screen.id,
                                     },
                                   });
                                 }}
