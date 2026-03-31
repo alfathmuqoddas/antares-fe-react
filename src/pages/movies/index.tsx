@@ -27,10 +27,13 @@ const MoviesPage = () => {
   return (
     <>
       <section className="" aria-label="movies-page">
-        <h1 className="text-xl font-bold mb-8">MOVIES AT ANTARES</h1>
+        <h1 className="text-3xl font-black tracking-widest text-neutral-700 mb-8">
+          MOVIES AT ANTARES
+        </h1>
+
         {/* {data && <pre>Data: {JSON.stringify(data, null, 2)}</pre>} */}
         {/* grid of movies card with 4 columns down to 2 columns on mobile */}
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 lg:gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 lg:gap-8">
           {data?.map((movie: any) => (
             <div
               key={movie.id}
@@ -44,24 +47,13 @@ const MoviesPage = () => {
                 width={300}
                 height={445}
               />
-              <div className="flex flex-col gap-1 p-2 text-center">
+              <div className="flex flex-col p-2 text-center">
                 <h2 className="font-semibold text-xl uppercase">
                   {movie.title}
                 </h2>
                 <div className="flex justify-center gap-2 text-sm">
                   <div className="flex gap-2 items-center">
-                    <div className="flex gap-1 items-center">
-                      <div>
-                        <Clock size={14} />
-                      </div>
-                      <div>{movie.runtime}</div>
-                    </div>
-                    <div className="flex gap-1 items-center">
-                      <div>
-                        <UserRoundCheck size={14} />
-                      </div>
-                      <div>{movie.rated}</div>
-                    </div>
+                    {movie.runtime} • {movie.rated}
                   </div>
                 </div>
                 <p className="text-sm">Released {movie.released}</p>

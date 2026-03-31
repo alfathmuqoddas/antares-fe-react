@@ -31,7 +31,9 @@ const AdminMoviesPage = () => {
   return (
     <>
       <header className="flex justify-between items-center mb-8">
-        <h1 className="text-xl font-bold">Manage Movies</h1>
+        <h1 className="text-3xl font-black tracking-widest text-neutral-700">
+          MANAGE MOVIES
+        </h1>
         <div>
           <NewMovieModal />
         </div>

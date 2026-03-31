@@ -3,13 +3,16 @@ import useAuth from "@/store/useAuth";
 export const fetcher = async (url: string, options?: RequestInit) => {
   const { user } = useAuth.getState();
   const token = user?.accessToken;
-  console.log({ token });
+  const isInternalRequest = url.startsWith(import.meta.env.VITE_API_BASE);
 
-  const headers = {
-    "Content-Type": "application/json",
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    ...options?.headers,
+  const headers: Record<string, string> = {
+    ...(options?.headers as Record<string, string>),
   };
+
+  if (token && isInternalRequest) {
+    headers["Authorization"] = `Bearer ${token}`;
+    headers["Content-Type"] = "application/json";
+  }
 
   const res = await fetch(url, {
     ...options,

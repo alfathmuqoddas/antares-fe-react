@@ -10,7 +10,7 @@ export interface Movie {
 
 const TheaterMovieCard = ({ movie }: { movie: Movie }) => {
   return (
-    <div className="flex gap-4 bg-white items-center p-4">
+    <div className="flex gap-4 bg-white items-center p-4 rounded-xl">
       <figure>
         <img
           src={movie.poster}

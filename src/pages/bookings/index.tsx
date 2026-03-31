@@ -23,7 +23,9 @@ export default function Bookings() {
 
   return (
     <div>
-      <h1 className="text-xl font-bold mb-8">MY BOOKINGS</h1>
+      <h1 className="text-3xl font-black mb-8 tracking-widest text-neutral-700">
+        MY BOOKINGS
+      </h1>
       <section>
         <div className="flex flex-col gap-4 md:gap-4">
           {bookings.map((booking: IBooking) => (

@@ -27,7 +27,7 @@ export default function Showtimes() {
       <div className="flex-1 overflow-auto pt-4">
         <div className="flex flex-col items-center min-w-max gap-8">
           <TheaterMovieCard movie={movie} />
-          <div className="w-1/4 h-2 bg-slate-300 rounded-full mt-4 shadow-[0_10px_20px_rgba(0,0,0,0.1)] text-center text-[10px] text-slate-500 uppercase tracking-widest">
+          <div className="w-full max-w-xl h-2 bg-slate-300 rounded-full mt-4 shadow-[0_10px_20px_rgba(0,0,0,0.1)] text-center text-[10px] text-slate-500 uppercase tracking-widest">
             Screen
           </div>
           <p>{showtime.screenType}</p>

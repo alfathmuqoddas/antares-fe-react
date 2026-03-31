@@ -22,7 +22,9 @@ const CinemasPage = () => {
   return (
     <>
       <section aria-label="cinema-page">
-        <h1 className="text-xl font-bold mb-8">THEATERS AT ANTARES</h1>
+        <h1 className="text-3xl tracking-widest font-black text-neutral-700 mb-8">
+          THEATERS AT ANTARES
+        </h1>
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {data.map((theater: any) => (
             <div

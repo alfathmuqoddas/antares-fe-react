@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
 import { useState, useEffect } from "react";
 import useSWR from "swr";
 import { fetcher } from "@/lib/fetcher";
@@ -20,22 +20,24 @@ const NewMovieModal = () => {
   const [open, setOpen] = useState(false);
   const [loadingSubmit, setLoadingSubmit] = useState(false);
   const [debouncedQuery, setDebouncedQuery] = useState("");
-  //useEffect to debounce the query
+
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedQuery(query);
-    }, 500);
+    const timer = setTimeout(() => setDebouncedQuery(query), 500);
     return () => clearTimeout(timer);
   }, [query]);
 
   const { data, error, isLoading } = useSWR(
-    `https://www.omdbapi.com/?i=${debouncedQuery}&apiKey=af1284eb`,
+    debouncedQuery
+      ? `https://www.omdbapi.com/?i=${debouncedQuery}&apiKey=af1284eb`
+      : null,
     fetcher,
   );
 
   //submit the imdbId
   const handleSubmit = async (e: any) => {
     e.preventDefault();
+    if (!data || data.Response === "False")
+      return alert("No valid movie to submit");
     setLoadingSubmit(true);
     try {
       const res = await fetch(
@@ -54,10 +56,13 @@ const NewMovieModal = () => {
       setLoadingSubmit(false);
       alert(data.message);
       setOpen(false);
+      setQuery("");
     } catch (error) {
       console.error("Error fetching movie data:", error);
       setLoadingSubmit(false);
       alert("Error submitting movie");
+    } finally {
+      setLoadingSubmit(false);
     }
   };
 
@@ -85,10 +90,16 @@ const NewMovieModal = () => {
               onChange={(e) => setQuery(e.target.value)}
             />
           </div>
-          <div>
-            {isLoading && <p>Loading...</p>}
-            {error && <p>Error: {error}</p>}
-            {data && (
+          <div className="min-h-[80px] rounded-md border p-3 text-sm">
+            {isLoading && (
+              <div className="flex justify-center">
+                <Loader2 className="animate-spin" />
+              </div>
+            )}
+            {data?.Response === "False" && (
+              <p className="text-destructive text-center">{data.Error}</p>
+            )}
+            {data?.Response === "True" && (
               <div>
                 <p>
                   Title: <strong>{data.Title}</strong>
@@ -101,10 +112,19 @@ const NewMovieModal = () => {
                 </p>
               </div>
             )}
+            {!debouncedQuery && (
+              <p className="text-muted-foreground text-center">
+                Enter an ID to preview...
+              </p>
+            )}
           </div>
         </div>
         <DialogFooter>
-          <Button type="submit" onClick={handleSubmit} disabled={loadingSubmit}>
+          <Button
+            type="submit"
+            onClick={handleSubmit}
+            disabled={loadingSubmit || !data || data.Response === "False"}
+          >
             {loadingSubmit ? "Processing..." : "Submit"}
           </Button>
         </DialogFooter>
