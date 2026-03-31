@@ -20,6 +20,11 @@ const Navbar = () => {
   const navMenus = [
     { name: "Movies", to: "/movies", icon: <Clapperboard size={16} /> },
     { name: "Theaters", to: "/cinema", icon: <Popcorn size={16} /> },
+    {
+      name: "My Bookings",
+      to: "/bookings",
+      icon: <SquareActivity size={16} />,
+    },
   ];
 
   const adminMenus = [

@@ -1,19 +1,29 @@
+import useAuth from "@/store/useAuth";
+
 export const fetcher = async (url: string, options?: RequestInit) => {
-  console.log(`Workspaceing: ${url} with options:`, options); // Log for demonstration
-  const res = await fetch(url, options);
+  const { user } = useAuth.getState();
+  const token = user?.accessToken;
+  console.log({ token });
+
+  const headers = {
+    "Content-Type": "application/json",
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...options?.headers,
+  };
+
+  const res = await fetch(url, {
+    ...options,
+    headers,
+  });
 
   if (!res.ok) {
-    // You might want to parse the error response body as well
+    const errorData = await res.json().catch(() => ({}));
     const error = new Error(
-      `An error occurred while fetching the data: ${res.status} ${res.statusText}`
+      errorData.message || `Error ${res.status}: ${res.statusText}`,
     );
-    // You can attach additional info to the error object
-    // error.info = errorText;
-    // error.status = res.status;
     throw error;
   }
 
-  // Check for empty response body before parsing JSON
   const text = await res.text();
-  return text ? JSON.parse(text) : null; // Or handle empty response appropriately
+  return text ? JSON.parse(text) : null;
 };

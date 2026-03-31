@@ -20,7 +20,6 @@ const LoginPage = () => {
       const response = await fetch(
         `${import.meta.env.VITE_API_BASE}/auth/login`,
         {
-          // Corrected port to 3000 based on common usage, was 300 in prompt
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -29,18 +28,21 @@ const LoginPage = () => {
             email: emailInput.value,
             password: passwordInput.value,
           }),
-        }
+        },
       );
 
       const data = await response.json();
 
       if (!response.ok) {
         throw new Error(
-          data.message || "Login failed. Please check your credentials."
+          data.message || "Login failed. Please check your credentials.",
         );
       }
       console.log("Login successful:", data);
-      login(data);
+      login({
+        accessToken: data.access_token,
+        additionalInfo: data.additionalInfo,
+      });
       alert("Login successful! Redirecting...");
       navigate("/");
       emailInput.setValue("");

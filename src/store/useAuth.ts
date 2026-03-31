@@ -5,7 +5,12 @@ interface AuthState {
   isLoggedIn: boolean;
   user: {
     accessToken: string;
-    additionalInfo: { roles: string; name: string; email: string };
+    additionalInfo: {
+      roles: string;
+      name: string;
+      email: string;
+      userId: string;
+    };
   } | null;
   login: (user: any) => void;
   logout: () => void;
@@ -30,8 +35,8 @@ const useAuth = create<AuthState>()(
         isLoggedIn: state.isLoggedIn,
         user: state.user,
       }), // you can "blacklist" properties and so much more from the storage
-    }
-  )
+    },
+  ),
 );
 
 export default useAuth;

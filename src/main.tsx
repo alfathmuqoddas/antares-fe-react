@@ -19,6 +19,7 @@ const CinemasPage = lazy(() => import("./pages/cinemas/index.tsx"));
 const CinemasDetailsPage = lazy(
   () => import("./pages/cinemas/details/index.tsx"),
 );
+const BookingsPage = lazy(() => import("./pages/bookings/index.tsx"));
 const AdminMoviesPage = lazy(() => import("./pages/admin/movies/index.tsx"));
 const AdminShowtimesPage = lazy(
   () => import("./pages/admin/showtimes/index.tsx"),
@@ -84,6 +85,14 @@ createRoot(document.getElementById("root")!).render(
                 element={
                   <Suspense fallback={<LoadingPage />}>
                     <CinemasPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="bookings"
+                element={
+                  <Suspense fallback={<LoadingPage />}>
+                    <BookingsPage />
                   </Suspense>
                 }
               />

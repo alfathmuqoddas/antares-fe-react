@@ -1,24 +1,44 @@
 import { useState } from "react";
 import { type Seat } from "./useGetSeatMap";
 
+export type TSelectedSeat = {
+  seatId: string;
+  seatLabel: string;
+  gridRow: number;
+  gridCol: number;
+};
+
 export const useSelectSeats = () => {
-  const [selectedSeatIds, setSelectedSeatIds] = useState<string[]>([]);
+  const [selectedSeats, setSelectedSeats] = useState<TSelectedSeat[]>([]);
 
   const toggleSeat = (seat: Seat) => {
     if (seat.isBooked || seat.type === "aisle") return;
 
-    setSelectedSeatIds((prevIds) => {
-      const isCurrentlySelected = prevIds.includes(seat.id);
+    setSelectedSeats((prev) => {
+      const isCurrentlySelected = prev.some((s) => s.seatId === seat.id);
 
       if (isCurrentlySelected) {
-        return prevIds.filter((id) => id !== seat.id);
+        return prev.filter((s) => s.seatId !== seat.id);
       } else {
-        return [...prevIds, seat.id];
+        const newList = [
+          ...prev,
+          {
+            seatId: seat.id,
+            seatLabel: `${seat.rowLabel}${seat.seatNumber}`,
+            gridRow: seat.gridRow,
+            gridCol: seat.gridCol,
+          },
+        ];
+
+        return newList.sort((a, b) => {
+          return a.gridRow - b.gridRow || a.gridCol - b.gridCol;
+        });
       }
     });
   };
 
-  const isSelected = (seatId: string) => selectedSeatIds.includes(seatId);
+  const isSelected = (seatId: string) =>
+    selectedSeats.some((s) => s.seatId === seatId);
 
-  return { selectedSeatIds, toggleSeat, isSelected };
+  return { selectedSeats, toggleSeat, isSelected };
 };

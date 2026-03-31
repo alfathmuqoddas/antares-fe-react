@@ -71,14 +71,12 @@ const MovieDetailsPage = () => {
                                 onClick={() => {
                                   navigate(`/showtimes/${showtime.id}`, {
                                     state: {
-                                      movie: {
-                                        title: data.title,
-                                        poster: data.poster,
-                                        duration: data.duration,
-                                        genre: data.genre,
-                                        rated: data.rated,
+                                      movie: data,
+                                      showtime: {
+                                        screenId: showtime.screen.id,
+                                        ticketPrice: showtime.ticketPrice,
+                                        screenType: showtime.screen.name,
                                       },
-                                      screenId: showtime.screen.id,
                                     },
                                   });
                                 }}

@@ -58,14 +58,12 @@ const CinemaDetailsPage = () => {
                               onClick={() => {
                                 navigate(`/showtimes/${showtime.id}`, {
                                   state: {
-                                    movie: {
-                                      title: movie.title,
-                                      poster: movie.poster,
-                                      duration: movie.duration,
-                                      genre: movie.genre,
-                                      rated: movie.rated,
+                                    movie,
+                                    showtime: {
+                                      screenId: showtime.screen.id,
+                                      ticketPrice: showtime.ticketPrice,
+                                      screenType: showtime.screen.name,
                                     },
-                                    screenId: showtime.screen.id,
                                   },
                                 });
                               }}
