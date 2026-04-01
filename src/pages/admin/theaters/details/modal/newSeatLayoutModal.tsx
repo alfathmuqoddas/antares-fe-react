@@ -10,11 +10,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
 import { Armchair } from "lucide-react";
+import { useApiMutation } from "@/hooks/useApiMutation";
 
 type Seat = {
   gridRow: number;
   gridCol: number;
-  rowLabel: string;
+  rowLabel: string | null;
   seatNumber: number | null;
   status: string;
   type?: "seat" | "aisle";
@@ -26,9 +27,23 @@ const NewSeatLayoutModal = ({ screenId }: { screenId: string }) => {
     col: number;
   }>({ row: 0, col: 0 });
   const [seats, setSeats] = useState<Seat[] | null>(null);
-  const [loadingSubmit, setLoadingSubmit] = useState(false);
 
   const [open, setOpen] = useState(false);
+
+  const { trigger, isMutating } = useApiMutation<{ message: string }, any, any>(
+    `/seats/bulk`,
+    {
+      method: "POST",
+      onSuccess: (data) => {
+        alert(data.message);
+        setOpen(false);
+      },
+      onError: (err) => {
+        console.error("Seat data error:", err);
+        alert("Error submitting movie");
+      },
+    },
+  );
 
   const handleSetSeatBasedOnInitialRowCol = () => {
     const { row, col } = initialRowCol;
@@ -100,27 +115,10 @@ const NewSeatLayoutModal = ({ screenId }: { screenId: string }) => {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    setLoadingSubmit(true);
-    try {
-      const res = await fetch(`${import.meta.env.VITE_API_BASE}/seats/bulk`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          seats: getFinalPayload(seats),
-          screenId,
-        }),
-      });
-      const data = await res.json();
-      setLoadingSubmit(false);
-      alert(data.message);
-      setOpen(false);
-    } catch (error) {
-      console.error("Error fetching movie data:", error);
-      setLoadingSubmit(false);
-      alert("Error submitting movie");
-    }
+    await trigger({
+      seats: getFinalPayload(seats),
+      screenId,
+    });
   };
 
   return (
@@ -176,14 +174,14 @@ const NewSeatLayoutModal = ({ screenId }: { screenId: string }) => {
           <Button
             onClick={handleSubmit}
             disabled={
-              loadingSubmit ||
+              isMutating ||
               initialRowCol.row === 0 ||
               initialRowCol.col === 0 ||
               initialRowCol.row > 26 ||
               initialRowCol.col > 40
             }
           >
-            {loadingSubmit ? "Processing..." : "Submit"}
+            {isMutating ? "Processing..." : "Submit"}
           </Button>
 
           <div className="flex-1 overflow-auto p-8 relative">

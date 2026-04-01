@@ -12,38 +12,36 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { PencilLine } from "lucide-react";
 import { useState } from "react";
+import { useApiMutation } from "@/hooks/useApiMutation";
+import type { TScreenDto, TScreenResponseDto } from "./newScreenModal";
 
-const UpdateScreenModal = ({ screen }: { screen: any }) => {
+const UpdateScreenModal = ({
+  screen,
+}: {
+  screen: TScreenDto & { id: string };
+}) => {
   const [screenData, setScreenData] = useState(screen);
-
-  const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
 
   const [open, setOpen] = useState(false);
 
+  const { trigger, isMutating } = useApiMutation<
+    TScreenResponseDto,
+    any,
+    TScreenDto
+  >(`/screens/${screen.id}`, {
+    method: "PATCH",
+    onSuccess: (data) => {
+      alert(data.message);
+    },
+    onError: (err) => {
+      console.error("Screen data error:", err);
+      alert("Error updating movie");
+    },
+  });
+
   const handleUpdate = async (e: any) => {
     e.preventDefault();
-    setIsLoadingUpdate(true);
-    try {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_BASE}/screens/${screen.id}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            ...screenData,
-          }),
-        },
-      );
-      const data = await res.json();
-      setIsLoadingUpdate(false);
-      alert(data.message);
-      setOpen(false);
-    } catch (error) {
-      console.error("Error updating movie:", error);
-      setIsLoadingUpdate(false);
-    }
+    trigger(screenData);
   };
 
   return (
@@ -123,12 +121,8 @@ const UpdateScreenModal = ({ screen }: { screen: any }) => {
           </div>
         </div>
         <DialogFooter>
-          <Button
-            type="submit"
-            onClick={handleUpdate}
-            disabled={isLoadingUpdate}
-          >
-            {isLoadingUpdate ? "Processing..." : "Update"}
+          <Button type="submit" onClick={handleUpdate} disabled={isMutating}>
+            {isMutating ? "Processing..." : "Update"}
           </Button>
         </DialogFooter>
       </DialogContent>

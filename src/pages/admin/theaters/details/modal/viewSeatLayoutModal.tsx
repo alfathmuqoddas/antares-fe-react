@@ -7,8 +7,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useState, useEffect } from "react";
 import { Armchair } from "lucide-react";
+import { useApi } from "@/hooks/useApi";
 
 type Seat = {
   gridRow: number;
@@ -20,39 +20,32 @@ type Seat = {
 };
 
 const ViewSeatLayoutModal = ({ screenId }: { screenId: string }) => {
-  const [seats, setSeats] = useState<Seat[]>([]);
-  const [loading, setLoading] = useState(false);
+  const {
+    data: seats,
+    error,
+    isLoading,
+  } = useApi<Seat[]>(`/seats/byScreenId/${screenId}`);
 
-  const maxRow =
-    seats.length > 0 ? Math.max(...seats.map((s) => s.gridRow)) : 0;
-  const maxCol =
-    seats.length > 0 ? Math.max(...seats.map((s) => s.gridCol)) : 0;
+  if (seats?.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <p className="text-muted-foreground animate-pulse">
+          No seats available for this screen.
+        </p>
+      </div>
+    );
+  }
 
-  useEffect(() => {
-    const getSeats = async () => {
-      setLoading(true);
-      try {
-        const res = await fetch(
-          `${import.meta.env.VITE_API_BASE}/seats/byScreenId/${screenId}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          },
-        );
-        const data = await res.json();
-        setSeats(data);
-        setLoading(false);
-      } catch (error) {
-        setLoading(false);
-        alert("Error submitting movie");
-      } finally {
-        setLoading(false);
-      }
-    };
-    if (screenId) getSeats();
-  }, [screenId]);
+  if (error) {
+    console.error("Error fetching theaters data:", error);
+    return <p>Sorry, there was an error fetching the theaters.</p>;
+  }
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
+
+  const maxRow = seats ? Math.max(...seats.map((s) => s.gridRow)) : 0;
+  const maxCol = seats ? Math.max(...seats.map((s) => s.gridCol)) : 0;
 
   return (
     <Dialog>
@@ -65,7 +58,7 @@ const ViewSeatLayoutModal = ({ screenId }: { screenId: string }) => {
         <DialogHeader>
           <DialogTitle>Seat Layout</DialogTitle>
         </DialogHeader>
-        {loading ? (
+        {isLoading ? (
           <div className="flex items-center justify-center h-64">
             <p className="text-muted-foreground animate-pulse">
               Loading seats...

@@ -12,35 +12,35 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { PencilLine } from "lucide-react";
 import { useState } from "react";
+import { useApiMutation } from "@/hooks/useApiMutation";
 
 const UpdateTheaterModal = ({ theater }: { theater: any }) => {
   const [theaterData, setTheaterData] = useState(theater);
 
-  const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
+  const { trigger, isMutating } = useApiMutation<any, any, any>(
+    `/theaters/${theater.id}`,
+    {
+      method: "PATCH",
+      onSuccess: (data) => {
+        alert(data.message);
+      },
+      onError: (err) => {
+        console.error("Screen data error:", err);
+        alert("Error updating movie");
+      },
+    },
+  );
 
   const handleUpdate = async (e: any) => {
     e.preventDefault();
-    setIsLoadingUpdate(true);
-    try {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_BASE}/theaters/${theater.id}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            ...theaterData,
-          }),
-        },
-      );
-      const data = await res.json();
-      setIsLoadingUpdate(false);
-      alert(data.message);
-    } catch (error) {
-      console.error("Error updating movie:", error);
-      setIsLoadingUpdate(false);
-    }
+    trigger({
+      name: theaterData.name,
+      slug: theaterData.slug,
+      address: theaterData.address,
+      city: theaterData.city,
+      state: theaterData.state,
+      zip: theaterData.zip,
+    });
   };
 
   return (
@@ -127,12 +127,8 @@ const UpdateTheaterModal = ({ theater }: { theater: any }) => {
           </div>
         </div>
         <DialogFooter>
-          <Button
-            type="submit"
-            onClick={handleUpdate}
-            disabled={isLoadingUpdate}
-          >
-            {isLoadingUpdate ? "Processing..." : "Update"}
+          <Button type="submit" onClick={handleUpdate} disabled={isMutating}>
+            {isMutating ? "Processing..." : "Update"}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { type TSelectedSeat } from "./useSelectSeats";
+import { useApiMutation } from "@/hooks/useApiMutation";
 
 export type TSubmitSeatsDto = {
   userId: string;
@@ -8,7 +8,20 @@ export type TSubmitSeatsDto = {
 };
 
 export const useSubmitSeats = () => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { trigger, isMutating: isSubmitting } = useApiMutation<
+    { message: string },
+    any,
+    TSubmitSeatsDto
+  >("/bookings", {
+    method: "POST",
+    onSuccess: (data) => {
+      alert(data.message);
+    },
+    onError: (err) => {
+      console.error("Booking Error:", err);
+      alert("Error submitting booking");
+    },
+  });
 
   const submitSeats = async (
     selectedSeats: TSelectedSeat[],
@@ -19,33 +32,11 @@ export const useSubmitSeats = () => {
       alert("Please select at least one seat.");
       return;
     }
-    setIsSubmitting(true);
-    try {
-      const payload: TSubmitSeatsDto = {
-        seatIds: selectedSeats.map((s) => s.seatId),
-        showtimeId,
-        userId,
-      };
-      const res = await fetch(`${import.meta.env.VITE_API_BASE}/bookings`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.message || "Failed to book seats");
-      }
-
-      alert(data.message || "Booking successful!");
-      return data;
-    } catch (error: any) {
-      console.error("Booking Error:", error);
-      alert(error.message || "Something went wrong. Please try again.");
-    } finally {
-      setIsSubmitting(false);
-    }
+    await trigger({
+      seatIds: selectedSeats.map((s) => s.seatId),
+      showtimeId,
+      userId,
+    });
   };
 
   return { submitSeats, isSubmitting };

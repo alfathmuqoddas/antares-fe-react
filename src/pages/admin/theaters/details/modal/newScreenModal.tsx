@@ -12,41 +12,56 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus } from "lucide-react";
 import { useState } from "react";
+import { useApiMutation } from "@/hooks/useApiMutation";
+
+export type TScreenDto = {
+  name: string;
+  capacity: number;
+  screenType: string;
+  ticketPrice: number;
+  layoutDescription: string;
+};
+
+export type TScreenResponseDto = {
+  message: string;
+};
 
 const NewScreenModal = ({ theaterId }: { theaterId: string }) => {
-  const [screenForm, setScreenForm] = useState({
+  const [screenForm, setScreenForm] = useState<TScreenDto>({
     name: "",
     capacity: 0,
     screenType: "",
     ticketPrice: 0,
     layoutDescription: "",
   });
-  const [loadingSubmit, setLoadingSubmit] = useState(false);
   const [open, setOpen] = useState(false);
+
+  const { trigger, isMutating } = useApiMutation<
+    TScreenResponseDto,
+    any,
+    TScreenDto & { theaterId: string }
+  >("/screens", {
+    method: "POST",
+    onSuccess: (data) => {
+      alert(data.message);
+      setOpen(false);
+    },
+    onError: (err) => {
+      console.error("Screen data error:", err);
+      alert("Error submitting movie");
+    },
+  });
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    setLoadingSubmit(true);
-    try {
-      const res = await fetch(`${import.meta.env.VITE_API_BASE}/screens`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...screenForm,
-          theaterId: theaterId,
-        }),
-      });
-      const data = await res.json();
-      setLoadingSubmit(false);
-      alert(data.message);
-      setOpen(false);
-    } catch (error) {
-      console.error("Error fetching movie data:", error);
-      setLoadingSubmit(false);
-      alert("Error submitting movie");
-    }
+    trigger({
+      name: screenForm.name,
+      capacity: screenForm.capacity,
+      screenType: screenForm.screenType,
+      ticketPrice: screenForm.ticketPrice,
+      layoutDescription: screenForm.layoutDescription,
+      theaterId,
+    });
   };
 
   return (
@@ -138,8 +153,8 @@ const NewScreenModal = ({ theaterId }: { theaterId: string }) => {
           </div>
         </div>
         <DialogFooter>
-          <Button type="submit" onClick={handleSubmit} disabled={loadingSubmit}>
-            {loadingSubmit ? "Processing..." : "Submit"}
+          <Button type="submit" onClick={handleSubmit} disabled={isMutating}>
+            {isMutating ? "Processing..." : "Submit"}
           </Button>
         </DialogFooter>
       </DialogContent>

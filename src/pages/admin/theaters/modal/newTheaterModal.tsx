@@ -12,38 +12,35 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus } from "lucide-react";
 import { useState } from "react";
+import { useApiMutation } from "@/hooks/useApiMutation";
+import type { TTheaterDto } from "../types";
 
 const NewTheaterModal = () => {
-  const [theaterForm, setTheaterForm] = useState({
+  const [theaterForm, setTheaterForm] = useState<Partial<TTheaterDto>>({
     name: "",
     state: "",
     city: "",
     zip: "",
     address: "",
   });
-  const [loadingSubmit, setLoadingSubmit] = useState(false);
+  const { trigger, isMutating } = useApiMutation<
+    { message: string },
+    any,
+    Partial<TTheaterDto>
+  >(`/theaters`, {
+    method: "POST",
+    onSuccess: (data) => {
+      alert(data.message);
+    },
+    onError: (err) => {
+      console.error("Screen data error:", err);
+      alert("Error submitting movie");
+    },
+  });
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    setLoadingSubmit(true);
-    try {
-      const res = await fetch(`${import.meta.env.VITE_API_BASE}/theaters`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...theaterForm,
-        }),
-      });
-      const data = await res.json();
-      setLoadingSubmit(false);
-      alert(data.message);
-    } catch (error) {
-      console.error("Error fetching movie data:", error);
-      setLoadingSubmit(false);
-      alert("Error submitting movie");
-    }
+    trigger(theaterForm);
   };
 
   return (
@@ -125,8 +122,8 @@ const NewTheaterModal = () => {
           </div>
         </div>
         <DialogFooter>
-          <Button type="submit" onClick={handleSubmit} disabled={loadingSubmit}>
-            {loadingSubmit ? "Processing..." : "Submit"}
+          <Button type="submit" onClick={handleSubmit} disabled={isMutating}>
+            {isMutating ? "Processing..." : "Submit"}
           </Button>
         </DialogFooter>
       </DialogContent>
