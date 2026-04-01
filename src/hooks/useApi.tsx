@@ -3,7 +3,8 @@ import { fetcher } from "../lib/fetcher";
 
 interface UseApiOptions<TData, TError> extends SWRConfiguration<TData, TError> {
   useAuth?: boolean;
-  onSuccess?: (data: TData) => void; // simple version
+  params?: Record<string, any>; // Support for query params
+  onSuccess?: (data: TData) => void;
   onError?: (err: TError) => void;
 }
 
@@ -11,28 +12,20 @@ export function useApi<TData = any, TError = any>(
   url: string | null,
   options: UseApiOptions<TData, TError> = {},
 ) {
-  const { useAuth = true, onSuccess, onError, ...swrConfig } = options;
+  const { useAuth = true, params, onSuccess, onError, ...swrConfig } = options;
 
   return useSWR<TData, TError>(
-    url,
-    (url: string) => fetcher<TData>(url, { useAuth }),
+    url ? [url, params] : null,
+    ([url, params]: [string, any]) => fetcher<TData>(url, { useAuth, params }),
     {
       ...swrConfig,
       onSuccess: (data, key, config) => {
-        onSuccess?.(data); // your simple callback
-        (swrConfig as SWRConfiguration<TData, TError>).onSuccess?.(
-          data,
-          key,
-          config,
-        );
+        onSuccess?.(data);
+        (swrConfig as any).onSuccess?.(data, key, config);
       },
       onError: (err, key, config) => {
         onError?.(err);
-        (swrConfig as SWRConfiguration<TData, TError>).onError?.(
-          err,
-          key,
-          config,
-        );
+        (swrConfig as any).onError?.(err, key, config);
       },
     },
   );

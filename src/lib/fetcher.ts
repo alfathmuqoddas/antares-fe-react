@@ -1,46 +1,24 @@
-import useAuthStore from "@/store/useAuth";
+import api from "./api";
+import { AxiosRequestConfig } from "axios";
 
-export interface FetcherOptions extends RequestInit {
+export interface FetcherOptions extends AxiosRequestConfig {
   useAuth?: boolean;
-  body?: any;
 }
-
-const BASE_URL = import.meta.env.VITE_API_BASE;
 
 export const fetcher = async <T>(
   url: string,
   options: FetcherOptions = {},
 ): Promise<T> => {
-  const { useAuth = true, body, ...customConfig } = options;
+  const { useAuth = true, ...config } = options;
 
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-    ...(customConfig.headers as Record<string, string>),
-  };
-
-  if (useAuth) {
-    const { user } = useAuthStore.getState();
-    const token = user?.accessToken;
-    if (token) {
-      headers["Authorization"] = `Bearer ${token}`;
-    }
-  }
-
-  const response = await fetch(`${BASE_URL}${url}`, {
-    ...customConfig,
-    headers,
-    body: body ? JSON.stringify(body) : undefined,
+  const response = await api.request<T>({
+    url,
+    ...config,
+    headers: {
+      ...config.headers,
+      "x-use-auth": String(useAuth),
+    },
   });
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    const error = new Error(
-      errorData.message || "An error occurred while fetching the data.",
-    );
-    (error as any).status = response.status;
-    (error as any).info = errorData;
-    throw error;
-  }
-
-  return response.json();
+  return response.data;
 };

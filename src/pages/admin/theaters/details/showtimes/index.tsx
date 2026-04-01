@@ -6,11 +6,21 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import NewShowtimesModal from "./modal/newShowtimesModal";
 import { Trash2 } from "lucide-react";
 import dayjs from "dayjs";
 import { useApi } from "@/hooks/useApi";
 import { useApiMutation } from "@/hooks/useApiMutation";
+import { useState } from "react";
 
 const ManageShowtimes = ({
   theaterId,
@@ -19,12 +29,19 @@ const ManageShowtimes = ({
   theaterId: string;
   screens: any;
 }) => {
-  const { data, error, isLoading, mutate } = useApi<any>(
-    `/showtimes/theater/${theaterId}`,
-    {
-      useAuth: true,
-    },
-  );
+  const [filter, setFilter] = useState({
+    screenId: "",
+    minDate: "",
+    maxDate: "",
+  });
+
+  const { data, error, isLoading, mutate } = useApi<{
+    showtimes: any;
+    hasMore: boolean;
+  }>(`/showtimes/admin/${theaterId}`, {
+    useAuth: true,
+    params: filter,
+  });
   const { trigger, isMutating } = useApiMutation<any, any, any>("/showtimes", {
     method: "DELETE",
     onSuccess: (data) => {
@@ -59,6 +76,51 @@ const ManageShowtimes = ({
         <h1 className="text-xl font-bold">Manage Showtimes</h1>
         <NewShowtimesModal screens={screens} />
       </div>
+      <div className="flex gap-2 mb-4 max-w-xl items-center">
+        <Input
+          type="date"
+          value={filter.minDate}
+          onChange={(e) =>
+            setFilter((f) => ({
+              ...f,
+              minDate: dayjs(e.target.value).format("YYYY-MM-DD"),
+            }))
+          }
+        />
+        <Input
+          type="date"
+          value={filter.maxDate}
+          onChange={(e) =>
+            setFilter((f) => ({
+              ...f,
+              maxDate: dayjs(e.target.value).format("YYYY-MM-DD"),
+            }))
+          }
+        />
+        <Select
+          value={filter.screenId || "all"}
+          onValueChange={(value) =>
+            setFilter((f) => ({
+              ...f,
+              screenId: value === "all" ? "" : value,
+            }))
+          }
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select a screen" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectItem value="all">All Screens</SelectItem>
+              {screens.map((screen: any) => (
+                <SelectItem key={screen.id} value={screen.id}>
+                  {screen.name}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>
       <section className="rounded-lg p-4 shadow bg-white">
         <Table>
           <TableHeader>
@@ -73,8 +135,8 @@ const ManageShowtimes = ({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.length > 0 ? (
-              data.map((showtime: any) => (
+            {data.showtimes.length > 0 ? (
+              data.showtimes.map((showtime: any) => (
                 <TableRow key={showtime.id}>
                   <TableCell>{showtime.movie.title}</TableCell>
                   <TableCell>{showtime.screen.name}</TableCell>

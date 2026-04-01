@@ -8,7 +8,7 @@ interface MutationOptions<
 > extends SWRMutationConfiguration<TData, TError, string, TVariables> {
   method?: "POST" | "PUT" | "PATCH" | "DELETE";
   useAuth?: boolean;
-  onSuccess?: (data: TData) => void; // simple callback
+  onSuccess?: (data: TData) => void;
   onError?: (err: TError) => void;
 }
 
@@ -24,34 +24,24 @@ export function useApiMutation<TData = any, TError = any, TVariables = any>(
     ...mutationConfig
   } = options;
 
-  return useSWRMutation<TData, TError, string | null, TVariables>(
+  return useSWRMutation<TData, TError, string, TVariables>(
     key,
-    async (urlKey, { arg }) => {
-      const finalUrl = typeof arg === "string" ? arg : urlKey;
-
-      if (!finalUrl) throw new Error("Missing URL for mutation");
-
-      const body = typeof arg === "string" ? undefined : arg;
-
-      return fetcher<TData>(finalUrl, {
+    async (url, { arg }) => {
+      return fetcher<TData>(url, {
         method,
         useAuth,
-        body,
+        data: arg,
       });
     },
     {
       ...mutationConfig,
       onSuccess: (data, key, config) => {
-        simpleOnSuccess?.(data); // your simple version
-        (
-          mutationConfig as SWRMutationConfiguration<any, any, any, any>
-        ).onSuccess?.(data, key, config);
+        simpleOnSuccess?.(data);
+        (mutationConfig as any).onSuccess?.(data, key, config);
       },
       onError: (err, key, config) => {
         simpleOnError?.(err);
-        (
-          mutationConfig as SWRMutationConfiguration<any, any, any, any>
-        ).onError?.(err, key, config);
+        (mutationConfig as any).onError?.(err, key, config);
       },
     },
   );
