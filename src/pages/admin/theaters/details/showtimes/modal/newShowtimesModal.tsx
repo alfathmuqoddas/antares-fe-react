@@ -18,14 +18,24 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Plus } from "lucide-react";
 import { useState } from "react";
-import useSWR from "swr";
-import { fetcher } from "@/lib/fetcher";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
+import { useApiMutation } from "@/hooks/useApiMutation";
+import { useApi } from "@/hooks/useApi";
+
+export type TShowtimeDto = {
+  startTime: string;
+  ticketPrice: number;
+  screenId: string;
+  movieId: string;
+};
+
+export type TShowtimeResponseDto = {
+  message: string;
+};
 
 const NewShowtimesModal = ({ screens }: { screens: any }) => {
-  const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
   const [open, setOpen] = useState(false);
   const [showtimeForm, setShowtimeForm] = useState({
     movieId: "",
@@ -37,35 +47,33 @@ const NewShowtimesModal = ({ screens }: { screens: any }) => {
     data: moviesData,
     error: moviesError,
     isLoading: moviesLoading,
-  } = useSWR(`${import.meta.env.VITE_API_BASE}/movies/now-playing`, fetcher);
+  } = useApi(`/movies/now-playing`);
+
+  const { trigger, isMutating } = useApiMutation<
+    TShowtimeResponseDto,
+    any,
+    TShowtimeDto
+  >("/showtimes", {
+    method: "POST",
+    onSuccess: (data) => {
+      alert(data.message);
+      setOpen(false);
+    },
+    onError: (err) => {
+      console.error("Showtime data error:", err);
+      alert("Error submitting showtime");
+    },
+  });
 
   dayjs.extend(utc);
   dayjs.extend(timezone);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    setIsLoadingSubmit(true);
-    try {
-      const localTime = dayjs.tz(showtimeForm.startTime, "Asia/Jakarta");
-      const res = await fetch(`${import.meta.env.VITE_API_BASE}/showtimes`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...showtimeForm,
-          startTime: localTime.toISOString(),
-        }),
-      });
-      const data = await res.json();
-      setIsLoadingSubmit(false);
-      alert(data.message);
-      setOpen(false);
-    } catch (error) {
-      console.error("Error fetching movie data:", error);
-      setIsLoadingSubmit(false);
-      alert("Error submitting movie");
-    }
+    await trigger({
+      ...showtimeForm,
+      startTime: dayjs.tz(showtimeForm.startTime, "Asia/Jakarta").toISOString(),
+    });
   };
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -161,7 +169,7 @@ const NewShowtimesModal = ({ screens }: { screens: any }) => {
         </div>
         <DialogFooter>
           <Button type="submit" onClick={handleSubmit}>
-            {isLoadingSubmit ? "Processing..." : "Submit"}
+            {isMutating ? "Processing..." : "Submit"}
           </Button>
         </DialogFooter>
       </DialogContent>

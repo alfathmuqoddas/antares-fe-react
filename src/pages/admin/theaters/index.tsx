@@ -1,25 +1,23 @@
-import useSWR from "swr";
-import { fetcher } from "@/lib/fetcher";
 import { useNavigate } from "react-router";
 import {
   Table,
   TableBody,
-  //   TableCaption,
   TableCell,
-  //   TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
 import NewTheaterModal from "./modal/newTheaterModal";
 import UpdateTheaterModal from "./modal/updateTheaterModal";
+import { useApi } from "@/hooks/useApi";
+import { TTheaterDto } from "./types";
 
 const AdminTheatersPage = () => {
   const navigate = useNavigate();
-  const { data, error, isLoading } = useSWR(
-    `${import.meta.env.VITE_API_BASE}/theaters`,
-    fetcher,
-  );
+  const { data, error, isLoading } = useApi<TTheaterDto[]>("/theaters", {
+    useAuth: true,
+  });
+
   if (error) {
     console.error("Error fetching theaters data:", error);
     return <p>Sorry, there was an error fetching the theaters.</p>;
@@ -56,7 +54,7 @@ const AdminTheatersPage = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data?.map((theater: any) => (
+            {data?.map((theater) => (
               <TableRow key={theater.id}>
                 <TableCell>
                   <span

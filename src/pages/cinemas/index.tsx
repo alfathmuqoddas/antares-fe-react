@@ -1,14 +1,11 @@
-import useSWR from "swr";
-import { fetcher } from "@/lib/fetcher";
 import { useNavigate } from "react-router";
 import { MapPin, Map, Locate } from "lucide-react";
+import { useApi } from "@/hooks/useApi";
+import type { TTheaterDto } from "../admin/theaters/types";
 
 const CinemasPage = () => {
   const navigate = useNavigate();
-  const { data, error, isLoading } = useSWR(
-    `${import.meta.env.VITE_API_BASE}/theaters`,
-    fetcher,
-  );
+  const { data, error, isLoading } = useApi<TTheaterDto[]>(`/theaters`);
   if (error) {
     console.error("Error fetching theaters data:", error);
     return <p>Sorry, there was an error fetching the theaters.</p>;
@@ -49,7 +46,6 @@ const CinemasPage = () => {
             </div>
           ))}
         </section>
-        {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
       </section>
     </>
   );

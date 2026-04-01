@@ -19,38 +19,62 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { PencilLine } from "lucide-react";
+import { useApiMutation } from "@/hooks/useApiMutation";
 
-const UpdateMovieModal = ({ movie }: { movie: any }) => {
-  const [movieData, setMovieData] = useState(movie);
+export type TMovieDto = {
+  id: string;
+  title: string;
+  nowPlaying: boolean;
+  released: string;
+  runtime: string;
+  genre: string;
+  rated: string;
+  poster: string;
+  director: string;
+  actors: string;
+  plot: string;
+};
 
-  const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
+export type TMovieResponseDto = {
+  message: string;
+};
+
+const UpdateMovieModal = ({ movie }: { movie: TMovieDto }) => {
+  const [movieData, setMovieData] = useState<TMovieDto>(movie);
 
   const [open, setOpen] = useState(false);
 
-  const handleUpdate = async (e: any) => {
-    e.preventDefault();
-    setIsLoadingUpdate(true);
-    try {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_BASE}/movies/${movie.id}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            ...movieData,
-          }),
-        },
-      );
-      const data = await res.json();
-      setIsLoadingUpdate(false);
+  const { trigger, isMutating } = useApiMutation<
+    TMovieResponseDto,
+    any,
+    TMovieDto
+  >(`/movies/${movie.id}`, {
+    method: "PATCH",
+    onSuccess: (data) => {
       alert(data.message);
       setOpen(false);
-    } catch (error) {
-      console.error("Error updating movie:", error);
-      setIsLoadingUpdate(false);
-    }
+    },
+    onError: (err) => {
+      console.error("Movie data error:", err);
+      alert("Error updating movie");
+    },
+  });
+
+  const handleUpdate = async (e: any) => {
+    e.preventDefault();
+    await trigger({
+      id: movie.id,
+      title: movieData.title,
+      nowPlaying: movieData.nowPlaying,
+      released: movieData.released,
+      runtime: movieData.runtime,
+      genre: movieData.genre,
+      rated: movieData.rated,
+      poster: movieData.poster,
+      director: movieData.director,
+      actors: movieData.actors,
+      plot: movieData.plot,
+    });
   };
 
   return (
@@ -167,12 +191,8 @@ const UpdateMovieModal = ({ movie }: { movie: any }) => {
           </div>
         </div>
         <DialogFooter>
-          <Button
-            type="submit"
-            onClick={handleUpdate}
-            disabled={isLoadingUpdate}
-          >
-            {isLoadingUpdate ? "Processing..." : "Update"}
+          <Button type="submit" onClick={handleUpdate} disabled={isMutating}>
+            {isMutating ? "Processing..." : "Update"}
           </Button>
         </DialogFooter>
       </DialogContent>

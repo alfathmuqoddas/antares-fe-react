@@ -1,32 +1,46 @@
-import useAuth from "@/store/useAuth";
+import useAuthStore from "@/store/useAuth";
 
-export const fetcher = async (url: string, options?: RequestInit) => {
-  const { user } = useAuth.getState();
-  const token = user?.accessToken;
-  const isInternalRequest = url.startsWith(import.meta.env.VITE_API_BASE);
+export interface FetcherOptions extends RequestInit {
+  useAuth?: boolean;
+  body?: any;
+}
+
+const BASE_URL = import.meta.env.VITE_API_BASE;
+
+export const fetcher = async <T>(
+  url: string,
+  options: FetcherOptions = {},
+): Promise<T> => {
+  const { useAuth = true, body, ...customConfig } = options;
 
   const headers: Record<string, string> = {
-    ...(options?.headers as Record<string, string>),
+    "Content-Type": "application/json",
+    ...(customConfig.headers as Record<string, string>),
   };
 
-  if (token && isInternalRequest) {
-    headers["Authorization"] = `Bearer ${token}`;
-    headers["Content-Type"] = "application/json";
+  if (useAuth) {
+    const { user } = useAuthStore.getState();
+    const token = user?.accessToken;
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
   }
 
-  const res = await fetch(url, {
-    ...options,
+  const response = await fetch(`${BASE_URL}${url}`, {
+    ...customConfig,
     headers,
+    body: body ? JSON.stringify(body) : undefined,
   });
 
-  if (!res.ok) {
-    const errorData = await res.json().catch(() => ({}));
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
     const error = new Error(
-      errorData.message || `Error ${res.status}: ${res.statusText}`,
+      errorData.message || "An error occurred while fetching the data.",
     );
+    (error as any).status = response.status;
+    (error as any).info = errorData;
     throw error;
   }
 
-  const text = await res.text();
-  return text ? JSON.parse(text) : null;
+  return response.json();
 };

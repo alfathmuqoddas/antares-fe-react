@@ -14,11 +14,16 @@ import { Loader2, Plus } from "lucide-react";
 import { useState, useEffect } from "react";
 import useSWR from "swr";
 import { fetcher } from "@/lib/fetcher";
+import { useApiMutation } from "@/hooks/useApiMutation";
+import type {
+  TOmdbApiResponseDto,
+  TMovieDto,
+  TMovieResponseDto,
+} from "../types";
 
 const NewMovieModal = () => {
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
-  const [loadingSubmit, setLoadingSubmit] = useState(false);
   const [debouncedQuery, setDebouncedQuery] = useState("");
 
   useEffect(() => {
@@ -26,44 +31,33 @@ const NewMovieModal = () => {
     return () => clearTimeout(timer);
   }, [query]);
 
-  const { data, error, isLoading } = useSWR(
+  const { data, isLoading } = useSWR<TOmdbApiResponseDto>(
     debouncedQuery
       ? `https://www.omdbapi.com/?i=${debouncedQuery}&apiKey=af1284eb`
       : null,
     fetcher,
   );
 
-  //submit the imdbId
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
-    if (!data || data.Response === "False")
-      return alert("No valid movie to submit");
-    setLoadingSubmit(true);
-    try {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_BASE}/movies/fetch-movie-data`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            imdbId: debouncedQuery,
-          }),
-        },
-      );
-      const data = await res.json();
-      setLoadingSubmit(false);
+  const { trigger, isMutating } = useApiMutation<
+    TMovieResponseDto,
+    any,
+    TMovieDto
+  >("/movies/fetch-movie-data", {
+    method: "POST",
+    onSuccess: (data) => {
       alert(data.message);
       setOpen(false);
       setQuery("");
-    } catch (error) {
-      console.error("Error fetching movie data:", error);
-      setLoadingSubmit(false);
+    },
+    onError: (err) => {
+      console.error("Movie data error:", err);
       alert("Error submitting movie");
-    } finally {
-      setLoadingSubmit(false);
-    }
+    },
+  });
+
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    await trigger({ imdbId: debouncedQuery });
   };
 
   return (
@@ -97,7 +91,7 @@ const NewMovieModal = () => {
               </div>
             )}
             {data?.Response === "False" && (
-              <p className="text-destructive text-center">{data.Error}</p>
+              <p className="text-destructive text-center">Error</p>
             )}
             {data?.Response === "True" && (
               <div>
@@ -123,9 +117,9 @@ const NewMovieModal = () => {
           <Button
             type="submit"
             onClick={handleSubmit}
-            disabled={loadingSubmit || !data || data.Response === "False"}
+            disabled={isMutating || !data || data.Response === "False"}
           >
-            {loadingSubmit ? "Processing..." : "Submit"}
+            {isMutating ? "Processing..." : "Submit"}
           </Button>
         </DialogFooter>
       </DialogContent>

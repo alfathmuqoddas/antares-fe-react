@@ -1,18 +1,20 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
+interface TUser {
+  accessToken: string;
+  additionalInfo: {
+    roles: string;
+    name: string;
+    email: string;
+    userId: string;
+  };
+}
+
 interface AuthState {
   isLoggedIn: boolean;
-  user: {
-    accessToken: string;
-    additionalInfo: {
-      roles: string;
-      name: string;
-      email: string;
-      userId: string;
-    };
-  } | null;
-  login: (user: any) => void;
+  user: TUser | null;
+  login: (user: TUser) => void;
   logout: () => void;
 }
 
@@ -21,7 +23,7 @@ const useAuth = create<AuthState>()(
     (set) => ({
       isLoggedIn: false,
       user: null,
-      login: (user: any) => set({ isLoggedIn: true, user }),
+      login: (user) => set({ isLoggedIn: true, user }),
       logout: () =>
         set({
           isLoggedIn: false,
@@ -29,12 +31,12 @@ const useAuth = create<AuthState>()(
         }),
     }),
     {
-      name: "auth", // name of the item in the storage (must be unique)
-      storage: createJSONStorage(() => localStorage), // default (can be omitted)
+      name: "auth",
+      storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         isLoggedIn: state.isLoggedIn,
         user: state.user,
-      }), // you can "blacklist" properties and so much more from the storage
+      }),
     },
   ),
 );

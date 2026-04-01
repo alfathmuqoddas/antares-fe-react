@@ -1,10 +1,9 @@
 import { useParams, useSearchParams, useNavigate } from "react-router";
-import { fetcher } from "@/lib/fetcher";
-import useSWR from "swr";
 import dayjs from "dayjs";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router";
 import { DateSelector } from "@/components/DateDropdown";
+import { useApi } from "@/hooks/useApi";
 
 const MovieDetailsPage = () => {
   const { slug } = useParams();
@@ -13,9 +12,8 @@ const MovieDetailsPage = () => {
 
   const dateQuery = searchParams.get("date") || dayjs().format("DD-MM-YYYY");
 
-  const { data, error, isLoading } = useSWR(
-    `${import.meta.env.VITE_API_BASE}/movies/${slug}/showtimes?date=${dateQuery}`,
-    fetcher,
+  const { data, error, isLoading } = useApi<any>(
+    `/movies/${slug}/showtimes?date=${dateQuery}`,
   );
 
   if (error) {

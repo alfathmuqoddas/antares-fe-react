@@ -1,19 +1,17 @@
-import useSWR from "swr";
-import { fetcher } from "@/lib/fetcher";
 import { useParams, useSearchParams, useNavigate } from "react-router";
 import TheaterMovieCard from "@/components/ui/theaterMovieCard";
 import { Button } from "@/components/ui/button";
 import dayjs from "dayjs";
 import { DateSelector } from "@/components/DateDropdown";
+import { useApi } from "@/hooks/useApi";
 
 const CinemaDetailsPage = () => {
   const { slug } = useParams();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const dateQuery = searchParams.get("date") || dayjs().format("DD-MM-YYYY");
-  const { data, error, isLoading } = useSWR(
-    `${import.meta.env.VITE_API_BASE}/theaters/${slug}/showtimes?date=${dateQuery}`,
-    fetcher,
+  const { data, error, isLoading } = useApi<any>(
+    `/theaters/${slug}/showtimes?date=${dateQuery}`,
   );
   if (error) {
     console.error("Error fetching theaters data:", error);
@@ -81,7 +79,6 @@ const CinemaDetailsPage = () => {
           ) : (
             <>No showtimes availbale for this theater</>
           )}
-          {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
         </section>
       </section>
     </>

@@ -1,19 +1,16 @@
-import { useState } from "react";
 import {
   Table,
   TableBody,
-  //   TableCaption,
   TableCell,
-  //   TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
 import NewShowtimesModal from "./modal/newShowtimesModal";
-import useSWR from "swr";
-import { fetcher } from "@/lib/fetcher";
 import { Trash2 } from "lucide-react";
 import dayjs from "dayjs";
+import { useApi } from "@/hooks/useApi";
+import { useApiMutation } from "@/hooks/useApiMutation";
 
 const ManageShowtimes = ({
   theaterId,
@@ -22,11 +19,24 @@ const ManageShowtimes = ({
   theaterId: string;
   screens: any;
 }) => {
-  const [isLoadingDelete, setIsLoadingDelete] = useState(false);
-  const { data, error, isLoading, mutate } = useSWR(
-    `${import.meta.env.VITE_API_BASE}/showtimes/theater/${theaterId}`,
-    fetcher,
+  const { data, error, isLoading, mutate } = useApi<any>(
+    `/showtimes/theater/${theaterId}`,
+    {
+      useAuth: true,
+    },
   );
+  const { trigger, isMutating } = useApiMutation<any, any, any>("/showtimes", {
+    method: "DELETE",
+    onSuccess: (data) => {
+      alert(data.message);
+      mutate();
+    },
+    onError: (err) => {
+      console.error("Screen data error:", err);
+      alert("Error deleting screen");
+    },
+  });
+
   if (error) {
     console.error("Error fetching theaters data:", error);
     return <p>Sorry, there was an error fetching the theaters.</p>;
@@ -38,25 +48,10 @@ const ManageShowtimes = ({
     return <p>No data found.</p>;
   }
   const handleDeleteShowtime = async (id: string) => {
-    setIsLoadingDelete(true);
-    try {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_BASE}/showtimes/${id}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        },
-      );
-      const data = await res.json();
-      alert(data.message);
-      setIsLoadingDelete(false);
-      mutate();
-    } catch (error) {
-      alert("Error deleting showtime");
-      setIsLoadingDelete(false);
+    if (!window.confirm("Are you sure you want to delete this showtime?")) {
+      return;
     }
+    await trigger(`/showtimes/${id}`);
   };
   return (
     <section>
@@ -95,7 +90,7 @@ const ManageShowtimes = ({
                     <Trash2
                       onClick={() => handleDeleteShowtime(showtime.id)}
                       className={`hover:cursor-pointer text-red-500 h-4 w-4 ${
-                        isLoadingDelete && "text-gray-500"
+                        isMutating && "text-gray-500"
                       }`}
                     />
                   </TableCell>

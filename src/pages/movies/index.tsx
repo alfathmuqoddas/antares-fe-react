@@ -1,15 +1,12 @@
-import useSWR from "swr";
-import { fetcher } from "@/lib/fetcher";
 import { useNavigate } from "react-router";
-import { Clock, UserRoundCheck } from "lucide-react";
+import { useApi } from "@/hooks/useApi";
+import type { TMovieDto } from "../admin/movies/modal/updateMovieModal";
 
 const MoviesPage = () => {
   const navigate = useNavigate();
-  console.log(import.meta.env.VITE_API_BASE);
-  const { data, error, isLoading } = useSWR(
-    `${import.meta.env.VITE_API_BASE}/movies/now-playing`,
-    fetcher,
-  );
+  const { data, error, isLoading } = useApi<
+    Array<TMovieDto & { slug: string }>
+  >("/movies/now-playing");
 
   if (error) {
     console.error("Error fetching movie data:", error);
@@ -34,7 +31,7 @@ const MoviesPage = () => {
         {/* {data && <pre>Data: {JSON.stringify(data, null, 2)}</pre>} */}
         {/* grid of movies card with 4 columns down to 2 columns on mobile */}
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 lg:gap-8">
-          {data?.map((movie: any) => (
+          {data?.map((movie) => (
             <div
               key={movie.id}
               onClick={() => navigate(`/movies/${movie.slug}`)}

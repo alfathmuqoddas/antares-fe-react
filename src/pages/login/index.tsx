@@ -1,58 +1,52 @@
-import { useState } from "react";
 import { useFormInput } from "@/hooks/useFormInput"; // Adjust path if needed
 import useAuth from "@/store/useAuth";
-import { useNavigate } from "react-router";
+import { useNavigate, Link } from "react-router";
+import { useApiMutation } from "@/hooks/useApiMutation";
+
+export type TUserLoginDto = {
+  email: string;
+  password: string;
+};
+
+export type TUserLoginResponse = {
+  access_token: string;
+  additionalInfo: {
+    roles: string;
+    email: string;
+    name: string;
+    userId: string;
+  };
+};
 
 const LoginPage = () => {
   const emailInput = useFormInput("");
   const passwordInput = useFormInput("");
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const { login } = useAuth();
+  const login = useAuth((state) => state.login);
   const navigate = useNavigate();
 
-  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setError("");
-    setIsLoading(true);
-
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_BASE}/auth/login`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: emailInput.value,
-            password: passwordInput.value,
-          }),
-        },
-      );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(
-          data.message || "Login failed. Please check your credentials.",
-        );
-      }
-      console.log("Login successful:", data);
+  const { trigger, isMutating, error } = useApiMutation<
+    TUserLoginResponse,
+    any,
+    TUserLoginDto
+  >("/auth/login", {
+    method: "POST",
+    onSuccess: (data) => {
       login({
         accessToken: data.access_token,
         additionalInfo: data.additionalInfo,
       });
       alert("Login successful! Redirecting...");
       navigate("/");
-      emailInput.setValue("");
-      passwordInput.setValue("");
-    } catch (err: any) {
+    },
+    onError: (err) => {
       console.error("Login error:", err);
-      setError(err.message || "An unexpected error occurred.");
-    } finally {
-      setIsLoading(false);
-    }
+      alert(err.message || "An unexpected error occurred.");
+    },
+  });
+
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    await trigger({ email: emailInput.value, password: passwordInput.value });
   };
 
   const inputClass =
@@ -87,8 +81,8 @@ const LoginPage = () => {
               id="email"
               {...emailInput}
               required
-              disabled={isLoading}
-              className={`${inputClass} ${isLoading ? "bg-gray-50" : ""}`}
+              disabled={isMutating}
+              className={`${inputClass} ${isMutating ? "bg-gray-50" : ""}`}
             />
           </div>
 
@@ -105,8 +99,8 @@ const LoginPage = () => {
               id="password"
               {...passwordInput}
               required
-              disabled={isLoading}
-              className={`${inputClass} ${isLoading ? "bg-gray-50" : ""}`}
+              disabled={isMutating}
+              className={`${inputClass} ${isMutating ? "bg-gray-50" : ""}`}
             />
           </div>
 
@@ -122,21 +116,20 @@ const LoginPage = () => {
           {/* Login Button */}
           <button
             type="submit"
-            disabled={isLoading}
+            disabled={isMutating}
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-md shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-150 ease-in-out transform active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed hover:cursor-pointer"
           >
-            {isLoading ? "Logging in..." : "Login"}
+            {isMutating ? "Logging in..." : "Login"}
           </button>
         </form>
 
         <p className="mt-8 text-center text-sm text-gray-600">
           Don't have an account?{" "}
-          <a
-            href="/register"
-            /* Replace with actual link e.g., <Link to="/register"> */ className="font-medium text-blue-600 hover:text-blue-500"
-          >
-            Sign up
-          </a>
+          <Link to="/register">
+            <span className="font-medium text-blue-600 hover:text-blue-500">
+              Sign up
+            </span>
+          </Link>
         </p>
       </div>
       <footer className="mt-12 text-center text-gray-500 text-xs">

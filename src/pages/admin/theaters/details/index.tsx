@@ -1,31 +1,40 @@
-import useSWR from "swr";
 import {
   Table,
   TableBody,
-  //   TableCaption,
   TableCell,
-  //   TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
 import { useParams } from "react-router";
-import { fetcher } from "@/lib/fetcher";
 import NewScreenModal from "./modal/newScreenModal";
 import UpdateScreenModal from "./modal/updateScreenModal";
 import ManageShowtimes from "./showtimes";
 import NewSeatLayoutModal from "./modal/newSeatLayoutModal";
 import ViewSeatLayoutModal from "./modal/viewSeatLayoutModal";
 import { Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useApi } from "@/hooks/useApi";
+import { useApiMutation } from "@/hooks/useApiMutation";
+import type { TTheaterDto, TScreenResponseDto } from "../types";
 
 const AdminTheatersDetailsPage = () => {
-  const { id } = useParams();
-  const [isLoadingDelete, setIsLoadingDelete] = useState(false);
-  const { data, error, isLoading, mutate } = useSWR(
-    `${import.meta.env.VITE_API_BASE}/theaters/${id}`,
-    fetcher,
+  const { id } = useParams() as { id: string };
+  const { data, error, isLoading, mutate } = useApi<TTheaterDto>(
+    `/theaters/${id}`,
   );
+
+  const { trigger } = useApiMutation<TScreenResponseDto, any, any>("/screens", {
+    method: "DELETE",
+    onSuccess: (data) => {
+      alert(data.message);
+      mutate();
+    },
+    onError: (err) => {
+      console.error("Screen data error:", err);
+      alert("Error deleting screen");
+    },
+  });
+
   if (error) {
     console.error("Error fetching theaters data:", error);
     return <p>Sorry, there was an error fetching the theaters.</p>;
@@ -39,30 +48,12 @@ const AdminTheatersDetailsPage = () => {
   const { screens } = data;
 
   const handleDeleteScreen = async (id: string) => {
-    setIsLoadingDelete(true);
     if (!window.confirm("Are you sure you want to delete this screen?")) {
-      setIsLoadingDelete(false);
       return;
     }
-    try {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_BASE}/screens/${id}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        },
-      );
-      const data = await res.json();
-      alert(data.message);
-      setIsLoadingDelete(false);
-      mutate();
-    } catch (error) {
-      alert("Error deleting screen");
-      setIsLoadingDelete(false);
-    }
+    await trigger(`/screens/${id}`);
   };
+
   return (
     <>
       <section className="" aria-label="admin-theaters-details-page">
@@ -153,7 +144,7 @@ const AdminTheatersDetailsPage = () => {
             </Table>
           </section>
         </section>
-        <ManageShowtimes theaterId={id || ""} screens={screens} />
+        <ManageShowtimes theaterId={id} screens={screens} />
       </section>
     </>
   );

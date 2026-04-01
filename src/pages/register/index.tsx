@@ -1,82 +1,62 @@
 import { useState } from "react";
-import { useFormInput } from "@/hooks/useFormInput"; // Adjust path if needed
-// import { useSWRConfig } from 'swr'; // Not strictly needed here if not revalidating SWR keys immediately
+import { useFormInput } from "@/hooks/useFormInput";
+import { useApiMutation } from "@/hooks/useApiMutation";
+import { useNavigate, Link } from "react-router";
+
+export type TUserRegisterDto = {
+  name: string;
+  email: string;
+  password: string;
+};
+
+export type TUserRegisterResponse = {
+  message: string;
+};
 
 const RegisterPage = () => {
+  const navigate = useNavigate();
   const fullNameInput = useFormInput("");
   const emailInput = useFormInput("");
   const passwordInput = useFormInput("");
   const confirmPasswordInput = useFormInput("");
-  const [error, setError] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
 
-  // const { mutate } = useSWRConfig(); // Uncomment if you need to mutate SWR keys after registration
+  const [errorInput, setErrorInput] = useState("");
+
+  const { trigger, isMutating } = useApiMutation<
+    TUserRegisterResponse,
+    any,
+    TUserRegisterDto
+  >("/auth/register", {
+    method: "POST",
+    onSuccess: (data) => {
+      alert(data.message || "Registration successful! Please login.");
+      navigate("/login");
+    },
+    onError: (err) => {
+      console.error("Registration error:", err);
+      alert(err.message || "An unexpected error occurred.");
+    },
+  });
 
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError("");
-    setSuccessMessage("");
-    setIsLoading(true);
+    setErrorInput("");
 
     if (passwordInput.value !== confirmPasswordInput.value) {
-      setError("Passwords do not match.");
-      setIsLoading(false);
+      setErrorInput("Passwords do not match.");
       return;
     }
 
     if (passwordInput.value.length < 6) {
-      setError("Password must be at least 6 characters long.");
-      setIsLoading(false);
+      setErrorInput("Password must be at least 6 characters long.");
       return;
     }
 
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_BASE}/auth/register`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name: fullNameInput.value, // API expects 'name'
-            email: emailInput.value,
-            password: passwordInput.value,
-          }),
-        }
-      );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(
-          data.message || "Registration failed. Please try again."
-        );
-      }
-
-      // Registration successful
-      console.log("Registration successful:", data);
-      setSuccessMessage(
-        data.message || "Registration successful! Please login."
-      );
-      // Optionally, you could auto-login the user here by calling your login logic
-      // or redirect to the login page.
-
-      // Clear form fields
-      fullNameInput.setValue("");
-      emailInput.setValue("");
-      passwordInput.setValue("");
-      confirmPasswordInput.setValue("");
-
-      // If you auto-logged in the user, you might want to mutate SWR keys:
-      // mutate('/api/user');
-    } catch (err: any) {
-      console.error("Registration error:", err);
-      setError(err.message || "An unexpected error occurred.");
-    } finally {
-      setIsLoading(false);
-    }
+    await trigger({
+      name: fullNameInput.value,
+      email: emailInput.value,
+      password: passwordInput.value,
+    });
   };
 
   const inputClass =
@@ -97,14 +77,7 @@ const RegisterPage = () => {
         <h1 className="text-xl font-semibold text-center text-gray-700 mb-8">
           Create Account
         </h1>
-        {error && (
-          <p className="text-red-500 text-sm text-center mb-4">{error}</p>
-        )}
-        {successMessage && (
-          <p className="text-green-500 text-sm text-center mb-4">
-            {successMessage}
-          </p>
-        )}
+
         <form onSubmit={handleRegister} className="space-y-6">
           {/* Full Name Input */}
           <div className="relative">
@@ -119,8 +92,8 @@ const RegisterPage = () => {
               id="fullName"
               {...fullNameInput}
               required
-              disabled={isLoading}
-              className={`${inputClass} ${isLoading ? "bg-gray-50" : ""}`}
+              disabled={isMutating}
+              className={`${inputClass} ${isMutating ? "bg-gray-50" : ""}`}
             />
           </div>
 
@@ -134,8 +107,8 @@ const RegisterPage = () => {
               id="email"
               {...emailInput}
               required
-              disabled={isLoading}
-              className={`${inputClass} ${isLoading ? "bg-gray-50" : ""}`}
+              disabled={isMutating}
+              className={`${inputClass} ${isMutating ? "bg-gray-50" : ""}`}
             />
           </div>
 
@@ -152,8 +125,8 @@ const RegisterPage = () => {
               id="password"
               {...passwordInput}
               required
-              disabled={isLoading}
-              className={`${inputClass} ${isLoading ? "bg-gray-50" : ""}`}
+              disabled={isMutating}
+              className={`${inputClass} ${isMutating ? "bg-gray-50" : ""}`}
             />
           </div>
 
@@ -170,29 +143,32 @@ const RegisterPage = () => {
               id="confirmPassword"
               {...confirmPasswordInput}
               required
-              disabled={isLoading}
-              className={`${inputClass} ${isLoading ? "bg-gray-50" : ""}`}
+              disabled={isMutating}
+              className={`${inputClass} ${isMutating ? "bg-gray-50" : ""}`}
             />
           </div>
+
+          {errorInput && (
+            <div className="text-red-500 text-sm mt-1">{errorInput}</div>
+          )}
 
           {/* Register Button */}
           <button
             type="submit"
-            disabled={isLoading}
+            disabled={isMutating}
             className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-md shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 transition-all duration-150 ease-in-out transform active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed hover:cursor-pointer"
           >
-            {isLoading ? "Registering..." : "Register"}
+            {isMutating ? "Loading..." : "Register"}
           </button>
         </form>
 
         <p className="mt-8 text-center text-sm text-gray-600">
           Already have an account?{" "}
-          <a
-            href="/login"
-            /* Replace with actual link e.g., <Link to="/login"> */ className="font-medium text-indigo-600 hover:text-indigo-500"
-          >
-            Sign In
-          </a>
+          <Link to="/login">
+            <span className="font-medium text-indigo-600 hover:text-indigo-500">
+              Sign In
+            </span>
+          </Link>
         </p>
       </div>
       <footer className="mt-12 text-center text-gray-500 text-xs">

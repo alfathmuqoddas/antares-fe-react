@@ -1,5 +1,3 @@
-import useSWR from "swr";
-import { fetcher } from "@/lib/fetcher";
 import {
   Table,
   TableBody,
@@ -11,12 +9,14 @@ import {
 import NewMovieModal from "./modal/newMovieModal";
 import UpdateMovieModal from "./modal/updateMovieModal";
 import { Badge } from "@/components/ui/badge";
+import { useApi } from "@/hooks/useApi";
+import type { TMovieDto } from "./modal/updateMovieModal";
 
 const AdminMoviesPage = () => {
-  const { data, error, isLoading } = useSWR(
-    `${import.meta.env.VITE_API_BASE}/movies`,
-    fetcher,
-  );
+  const { data, error, isLoading } = useApi<TMovieDto[]>(`/movies`, {
+    useAuth: true,
+  });
+
   if (error) {
     console.error("Error fetching movie data:", error);
     return <p>Sorry, there was an error fetching the movies.</p>;
@@ -61,7 +61,7 @@ const AdminMoviesPage = () => {
                 </TableCell>
               </TableRow>
             ) : (
-              data?.map((movie: any) => (
+              data?.map((movie) => (
                 <TableRow key={movie.id}>
                   <TableCell>
                     <span className="font-semibold">{movie.title}</span>

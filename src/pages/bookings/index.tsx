@@ -1,12 +1,13 @@
-import { fetcher } from "@/lib/fetcher";
-import useSWR from "swr";
 import { IBooking } from "./type";
 import BookingCard from "@/components/BookingCard";
+import { useApi } from "@/hooks/useApi";
 
 export default function Bookings() {
-  const { data, error, isLoading } = useSWR(
-    `${import.meta.env.VITE_API_BASE}/bookings/my-bookings`,
-    fetcher,
+  const { data, error, isLoading } = useApi<IBooking[]>(
+    `/bookings/my-bookings`,
+    {
+      useAuth: true,
+    },
   );
   if (error) {
     console.error("Error fetching bookings data:", error);
